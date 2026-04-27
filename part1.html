@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="reveal-full-page"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何与 AI 合作</title>
+<link rel="stylesheet" href="lib/reveal.css">
+<style>
+@import url('fonts/fonts.css');
+
+:root {
+  --bg:      #FAF7F2;
+  --card:    #F3EDE4;
+  --ink:     #2B2D2E;
+  --ink-70:  rgba(43,45,46,0.70);
+  --ink-40:  rgba(43,45,46,0.40);
+  --ink-20:  rgba(43,45,46,0.20);
+  --ink-10:  rgba(43,45,46,0.10);
+  --ink-05:  rgba(43,45,46,0.05);
+
+  --blue:    #4A7FC4;
+  --orange:  #D98A4A;
+  --rose:    #C95F6D;
+  --green:   #5BA67A;
+
+  --display: 'Outfit', 'Noto Sans SC', system-ui, sans-serif;
+  --body:    'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+
+  --sh-sm:   0 1px 3px rgba(0,0,0,0.05);
+  --sh-md:   0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.reveal-viewport {
+  background: var(--bg);
+}
+
+.reveal-viewport::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E") repeat;
+  background-size: 300px;
+}
+
+.reveal {
+  font-family: var(--body);
+  color: var(--ink);
+  font-size: 18px;
+  position: relative; z-index: 1;
+}
+
+.reveal .slides section {
+  text-align: left;
+  padding: 80px 120px 64px;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform: translateZ(0);
+  will-change: transform;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.reveal .slides section.center-slide {
+  padding: 80px 120px;
+}
+
+.reveal h1, .reveal h2, .reveal h3 {
+  font-family: var(--display);
+  text-transform: none;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+.reveal p { margin: 0; }
+.reveal .progress span { background: var(--blue); height: 2px; }
+.reveal .controls { color: var(--ink-20); }
+.reveal .slide-number {
+  display: block !important;
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  background: none !important;
+  right: 32px !important;
+  top: 28px !important;
+  bottom: auto !important;
+  left: auto !important;
+}
+
+/* ─── Typography ─── */
+.hero {
+  font-family: var(--display);
+  font-size: 84px;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.0;
+  color: var(--ink);
+}
+.title {
+  font-family: var(--display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.sub {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.body {
+  font-family: var(--body);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink-70);
+}
+
+/* ─── Accent Colors ─── */
+.c-ink { color: var(--ink) !important; }
+.c-70  { color: var(--ink-70) !important; }
+.c-40  { color: var(--ink-40) !important; }
+.c-b   { color: var(--blue) !important; }
+.c-o   { color: var(--orange) !important; }
+.c-r   { color: var(--rose) !important; }
+
+/* Marker highlight — mimics highlighter pen */
+.hl-b {
+  background-image: linear-gradient(transparent 58%, rgba(74,127,196,0.18) 58%, rgba(74,127,196,0.18) 88%, transparent 88%);
+  padding: 0 3px;
+}
+.hl-o {
+  background-image: linear-gradient(transparent 58%, rgba(217,138,74,0.20) 58%, rgba(217,138,74,0.20) 88%, transparent 88%);
+  padding: 0 3px;
+}
+
+/* ─── Spacers ─── */
+.s8{height:8px}.s12{height:12px}.s16{height:16px}.s20{height:20px}.s28{height:28px}.s36{height:36px}.s48{height:48px}
+
+/* ─── Layout ─── */
+.center-slide {
+  align-items: center !important;
+  text-align: center !important;
+}
+.content-area { max-width: 920px; width: 100%; }
+.reveal .slides section > * { max-width: 920px; width: 100%; }
+.cols { display: flex; gap: 56px; align-items: center; width: 100%; }
+.cols > .c1  { flex: 1; min-width: 0; }
+.cols > .c08 { flex: 0.8; min-width: 0; }
+
+/* ─── Marker line ─── */
+.marker {
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  margin-bottom: 20px;
+  background: var(--blue);
+}
+.marker.c { margin-left: auto; margin-right: auto; }
+.marker.orange { background: var(--orange); }
+
+/* ─── Label ─── */
+.lbl {
+  font-family: var(--body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+.lbl-r {
+  color: var(--rose);
+  background: rgba(201,95,109,0.08);
+  border: 1.5px solid rgba(201,95,109,0.20);
+}
+.lbl-b {
+  color: var(--blue);
+  background: rgba(74,127,196,0.08);
+  border: 1.5px solid rgba(74,127,196,0.20);
+}
+
+/* ─── Chips (multi-turn) ─── */
+.turns { display: flex; flex-direction: column; gap: 20px; }
+.turn  { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+.turn-l {
+  min-width: 48px;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-40);
+}
+.ch {
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.ch-s {
+  border: 1.5px solid var(--ink-10);
+  color: var(--ink-40);
+  background: var(--ink-05);
+}
+.ch-u {
+  border: 1.5px solid rgba(74,127,196,0.25);
+  color: var(--blue);
+  background: rgba(74,127,196,0.06);
+}
+.ch-a {
+  border: 1.5px solid rgba(91,166,122,0.25);
+  color: var(--green);
+  background: rgba(91,166,122,0.06);
+}
+.ch-o { color: var(--ink-20); padding: 0 2px; }
+.turn-n {
+  font-size: 12px;
+  color: var(--rose);
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* ─── Data Table ─── */
+.dtable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 16px;
+  max-width: 860px;
+}
+.dtable th {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-40);
+  padding: 0 0 14px 0;
+  text-align: left;
+  border-bottom: 2px solid var(--ink-10);
+}
+.dtable td {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ink-05);
+  vertical-align: top;
+}
+.dtable tr:last-child td { border-bottom: none; }
+.dtable td:first-child {
+  color: var(--ink);
+  font-weight: 500;
+  padding-right: 48px;
+}
+.dtable td:last-child { color: var(--ink-70); }
+
+/* ─── Callout ─── */
+.callout {
+  border-left: 3px solid var(--blue);
+  padding-left: 20px;
+}
+.callout.rose { border-color: var(--rose); }
+
+/* ─── Capacity bar ─── */
+.cap {
+  width: 100%;
+  max-width: 380px;
+  height: 6px;
+  background: var(--ink-05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cap-f {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--blue), #7B6BC4);
+}
+
+/* ─── Image slot ─── */
+.img-slot {
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.img-slot .placeholder {
+  color: var(--ink-40);
+  font-size: 14px;
+  padding: 40px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ─── Chat card (预训练对话演示) ─── */
+.chat-card {
+  flex: 1;
+  background: #F3EDE4;
+  border: 1px solid var(--ink-10);
+  border-radius: 14px;
+  padding: 18px 22px 22px;
+  box-shadow: var(--sh-md);
+  display: flex;
+  flex-direction: column;
+}
+.chat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink-10);
+}
+.chat-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 50%;
+  flex: 0 0 10px;
+}
+.chat-card-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-40);
+  margin-left: 6px;
+}
+.chat-row {
+  display: flex;
+  margin-bottom: 12px;
+}
+.chat-row:last-child { margin-bottom: 0; }
+.chat-row-user { justify-content: flex-end; }
+.chat-row-bot  { justify-content: flex-start; }
+.chat-bubble {
+  max-width: 92%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.7;
+  font-weight: 400;
+  text-align: left;
+}
+.chat-bubble-user {
+  background: rgba(74,127,196,0.12);
+  color: var(--ink);
+  border-bottom-right-radius: 4px;
+}
+.chat-bubble-bot {
+  background: rgba(43,45,46,0.05);
+  color: var(--ink);
+  border-bottom-left-radius: 4px;
+}
+.chat-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--ink-10);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.chat-footer-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.chat-footer-pass .chat-footer-mark {
+  background: rgba(91,166,122,0.15);
+  color: var(--green);
+}
+.chat-footer-text {
+  font-family: var(--body);
+  font-size: 13px;
+  color: var(--ink-70);
+  font-weight: 500;
+}
+
+/* ─── 缺陷卡片 ─── */
+.defect-card {
+  flex: 1;
+  background: #F3EDE4;
+  border: 1px solid var(--ink-10);
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: var(--sh-md);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.defect-title {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ink-10);
+}
+.defect-why {
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-70);
+  margin-bottom: 16px;
+  flex: 1;
+}
+.defect-action {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--ink-10);
+  font-family: var(--body);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  font-weight: 500;
+}
+.defect-action::before {
+  content: '→ ';
+  color: var(--blue);
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+/* ─── SFT 训练样本卡片 ─── */
+.sft-card {
+  flex: 1;
+  background: #F3EDE4;
+  border: 1px solid var(--ink-10);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: var(--sh-md);
+  display: flex;
+  flex-direction: column;
+}
+.sft-card-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-40);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ink-10);
+}
+.sft-field {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.sft-key {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  background: rgba(74,127,196,0.10);
+  padding: 3px 8px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.sft-value {
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+  flex: 1;
+}
+.sft-divider {
+  height: 1px;
+  background: var(--ink-05);
+  margin: 14px 0;
+}
+
+/* ─── Tool Card Grid ─── */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 860px;
+  width: 100%;
+}
+.tool-card {
+  background: var(--card);
+  border: 1px solid var(--ink-10);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--sh-sm);
+  text-align: left;
+}
+.tool-card-name {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.tool-card-desc {
+  font-size: 13px;
+  color: var(--ink-70);
+  line-height: 1.5;
+}
+.tool-card.tc-rose {
+  border-color: rgba(201,95,109,0.25);
+}
+
+/* ─── Fragments ─── */
+.reveal .fragment.f {
+  transform: translateY(14px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal .fragment.f.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ─── #19 右栏放大镜：让 fade-in-then-out 过渡更柔 ─── */
+.reveal .fragment.ctx-zoom {
+  transition: opacity 0.5s ease;
+}
+</style>
+</head>
+<body class="reveal-viewport" style="--slide-width: 1280px; --slide-height: 720px; --slide-scale: 1.7652777777777777; --viewport-width: 2560px; --viewport-height: 1271px;">
+<!-- 全局 SVG 定义：循环机制图（17/18 页共用） -->
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+  <defs>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B6D6E"></path>
+    </marker>
+    <marker id="arr-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4A7FC4"></path>
+    </marker>
+    <marker id="arr-gr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5BA67A"></path>
+    </marker>
+
+    <symbol id="loop-icon" viewBox="0 0 380 460">
+      <rect x="115" y="10" width="150" height="56" rx="10" fill="#F3EDE4" stroke="rgba(43,45,46,0.20)" stroke-width="1.5"></rect>
+      <text x="190" y="36" text-anchor="middle" font-family="Outfit, 'Noto Sans SC', sans-serif" font-size="15" font-weight="700" fill="#2B2D2E">上下文</text>
+      <text x="190" y="55" text-anchor="middle" font-family="Inter, 'Noto Sans SC', sans-serif" font-size="11" fill="rgba(43,45,46,0.60)">消息 · 工具结果</text>
+
+      <line x1="190" y1="68" x2="190" y2="108" stroke="#6B6D6E" stroke-width="1.5" marker-end="url(#arr-g)"></line>
+      <text x="198" y="92" font-family="Inter, sans-serif" font-size="10" fill="rgba(43,45,46,0.50)">读</text>
+
+      <rect x="115" y="115" width="150" height="60" rx="10" fill="rgba(74,127,196,0.10)" stroke="#4A7FC4" stroke-width="1.5"></rect>
+      <text x="190" y="142" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#4A7FC4">模型</text>
+      <text x="190" y="162" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="rgba(43,45,46,0.60)">输出一段文本</text>
+
+      <line x1="190" y1="177" x2="190" y2="220" stroke="#6B6D6E" stroke-width="1.5" marker-end="url(#arr-g)"></line>
+
+      <rect x="100" y="225" width="180" height="68" rx="10" fill="rgba(201,95,109,0.10)" stroke="#C95F6D" stroke-width="1.5"></rect>
+      <text x="190" y="252" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#C95F6D">Harness</text>
+      <text x="190" y="273" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="rgba(43,45,46,0.60)">里面有工具调用？</text>
+
+      <path d="M 130,295 Q 75,330 75,365" stroke="#4A7FC4" stroke-width="1.5" fill="none" marker-end="url(#arr-b)"></path>
+      <text x="138" y="316" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#4A7FC4">有</text>
+
+      <rect x="20" y="370" width="110" height="56" rx="10" fill="rgba(74,127,196,0.06)" stroke="rgba(74,127,196,0.45)" stroke-width="1.5"></rect>
+      <text x="75" y="394" text-anchor="middle" font-family="Outfit, sans-serif" font-size="13" font-weight="700" fill="#4A7FC4">执行工具</text>
+      <text x="75" y="411" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="rgba(43,45,46,0.60)">结果回上下文</text>
+
+      <path d="M 20,398 L 8,398 L 8,38 L 113,38" stroke="#4A7FC4" stroke-width="1.5" fill="none" stroke-dasharray="4,4" opacity="0.55" marker-end="url(#arr-b)"></path>
+
+      <path d="M 250,295 Q 305,330 305,365" stroke="#5BA67A" stroke-width="1.5" fill="none" marker-end="url(#arr-gr)"></path>
+      <text x="226" y="316" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#5BA67A">没有</text>
+
+      <rect x="250" y="370" width="110" height="56" rx="10" fill="rgba(91,166,122,0.10)" stroke="#5BA67A" stroke-width="1.5"></rect>
+      <text x="305" y="394" text-anchor="middle" font-family="Outfit, sans-serif" font-size="13" font-weight="700" fill="#5BA67A">给用户</text>
+      <text x="305" y="411" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="rgba(43,45,46,0.60)">循环结束 ✓</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="reveal fade focused has-horizontal-slides ready" role="application" data-transition-speed="slow" data-background-transition="none" data-navigation-mode="linear" style="">
+<div class="slides" style="width: 1280px; height: 720px; inset: 50% auto auto 50%; transform: translate(-50%, -50%) scale(1.76528);">
+
+<!-- ===== 封面 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <h1 class="hero" style="font-size: 80px;">如何与 <span class="c-b">AI</span> 合作</h1>
+</section>
+
+<!-- ===== 开场问题 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <h1 class="hero" style="font-size: 88px;">
+    AI 究竟在做什么<span class="c-b" style="font-weight: 300;">？</span>
+  </h1>
+</section>
+
+<!-- ===== 核心机制 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center;">
+    <div class="fragment f" data-fragment-index="0">
+      <p style="font-size: 14px; color: var(--ink-20); font-weight: 400;">今天只聊一种 AI</p>
+      <p style="font-size: 18px; color: var(--ink-70); font-weight: 500; margin-top: 6px;">基于 Transformer 的语言模型</p>
+    </div>
+    <div class="s36"></div>
+    <div class="fragment f" data-fragment-index="1">
+      <h1 class="hero" style="font-size: 68px; line-height: 1.15;">
+        基于<span class="hl-b c-b">上下文</span><br>
+        预测<span class="hl-b c-b">下一个 Token</span>
+      </h1>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 你发一句话之后发生了什么 ===== -->
+<section class="center-slide" style="padding: 36px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 1080px;">
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="marker c"></div>
+      <p class="sub">你发一句话之后，发生了什么</p>
+    </div>
+
+    <div style="display: block; margin-bottom: 26px;">
+      <div class="fragment f visible" data-fragment-index="0" style="display: flex; width: 100%; justify-content: flex-end; margin-bottom: 12px;">
+        <div style="background: rgba(74,127,196,0.10); border: 1.5px solid rgba(74,127,196,0.35); border-radius: 16px 16px 4px 16px; padding: 12px 22px;">
+          <p style="font-family: var(--display); font-size: 22px; font-weight: 500; color: var(--ink); margin: 0;">怎么才能日入万火？</p>
+        </div>
+      </div>
+      <div class="fragment f visible current-fragment" data-fragment-index="3" style="display: flex; width: 100%; justify-content: flex-start;">
+        <div style="background: var(--card); border: 1.5px solid var(--ink-20); border-radius: 16px 16px 16px 4px; padding: 12px 22px;">
+          <p style="font-family: var(--display); font-size: 22px; font-weight: 500; color: var(--ink); margin: 0;">做梦</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 1px; background: var(--ink-10); margin-bottom: 24px;"></div>
+
+    <div style="display: grid; grid-template-columns: 1fr 84px 1fr; gap: 22px; align-items: stretch;">
+
+      <div class="fragment f visible" data-fragment-index="1">
+        
+        <div style="background: var(--card); border: 1.5px solid var(--ink-10); border-radius: 12px; padding: 14px 18px; margin-bottom: 8px;">
+          
+          <p style="font-family: var(--display); font-size: 17px; font-weight: 500; color: var(--ink); margin: 0;">怎么才能日入万火？</p>
+        </div>
+        <div style="text-align: center; font-family: var(--display); font-size: 22px; color: var(--ink-20); line-height: 1.2;">↓</div>
+        <div style="display: flex; justify-content: center; margin: 6px 0;">
+          <div style="width: 78px; height: 78px; border-radius: 50%; background: rgba(74,127,196,0.08); border: 1.5px solid var(--blue); display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 19px; color: var(--blue); font-weight: 700; letter-spacing: 0.04em;">模型</div>
+        </div>
+        <div style="text-align: center; font-family: var(--display); font-size: 22px; color: var(--ink-20); line-height: 1.2;">↓</div>
+        <div style="text-align: center; margin-top: 8px;">
+          <span style="display: inline-block; background: var(--orange); color: white; border-radius: 10px; padding: 8px 24px; font-family: var(--display); font-size: 28px; font-weight: 800;">做</span>
+        </div>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="2" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="font-family: var(--display); font-size: 44px; color: var(--ink-40); line-height: 1;">→</div>
+        
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="2">
+        
+        <div style="background: var(--card); border: 1.5px solid var(--ink-10); border-radius: 12px; padding: 14px 18px; margin-bottom: 8px;">
+          
+          <p style="font-family: var(--display); font-size: 17px; font-weight: 500; color: var(--ink); margin: 0;">怎么才能日入万火？<span style="color: var(--orange); font-weight: 800;">做</span></p>
+        </div>
+        <div style="text-align: center; font-family: var(--display); font-size: 22px; color: var(--ink-20); line-height: 1.2;">↓</div>
+        <div style="display: flex; justify-content: center; margin: 6px 0;">
+          <div style="width: 78px; height: 78px; border-radius: 50%; background: rgba(74,127,196,0.08); border: 1.5px solid var(--blue); display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 19px; color: var(--blue); font-weight: 700; letter-spacing: 0.04em;">模型</div>
+        </div>
+        <div style="text-align: center; font-family: var(--display); font-size: 22px; color: var(--ink-20); line-height: 1.2;">↓</div>
+        <div style="text-align: center; margin-top: 8px;">
+          <span style="display: inline-block; background: var(--orange); color: white; border-radius: 10px; padding: 8px 24px; font-family: var(--display); font-size: 28px; font-weight: 800;">梦</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 多轮对话 ===== -->
+<section class="center-slide" style="padding: 36px 70px; display: none;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 1080px;">
+
+    <div style="text-align: center; margin-bottom: 18px;">
+      <div class="marker c"></div>
+      <p class="sub">多轮对话：每一轮都把整段历史重发一遍</p>
+    </div>
+
+    <div class="fragment f img-slot" data-fragment-index="0" style="height: 540px;">
+      <img src="img-05-multi-turn.png" alt="多轮对话累积示意">
+    </div>
+  </div>
+</section>
+
+<!-- ===== 关键结论（核心箭） ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center; max-width: 780px; margin: 0 auto;">
+    <div class="fragment f" data-fragment-index="0">
+      <h1 class="hero" style="font-size: 56px; line-height: 1.3;">模型输出什么</h1>
+    </div>
+    <div class="fragment f" data-fragment-index="1">
+      <h1 class="hero" style="font-size: 56px; line-height: 1.3;">
+        <span class="hl-o" style="color: var(--orange);">几乎完全</span>由<span class="c-b">上下文窗口</span>中的内容决定
+      </h1>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 约束一 ===== -->
+<section class="center-slide" style="padding: 56px 80px; display: none;" hidden="" aria-hidden="true">
+  <div>
+    <div class="fragment f" data-fragment-index="0">
+      <span class="lbl lbl-r" style="margin-left: auto; margin-right: auto;">约束一</span>
+      <h2 class="title" style="text-align: center;">上下文窗口有长度上限</h2>
+    </div>
+    <div class="s20"></div>
+    <div class="fragment f" data-fragment-index="1">
+      <div class="img-slot" style="width: 100%; max-width: 820px; margin: 0 auto; aspect-ratio: 16/9;">
+        <img src="img-07-context-limit.jpeg" alt="上下文窗口塞满后新消息进不去">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 约束二 ===== -->
+<section class="center-slide" style="padding: 56px 80px; display: none;" hidden="" aria-hidden="true">
+  <div>
+    <div class="fragment f" data-fragment-index="0">
+      <span class="lbl lbl-r" style="margin-left: auto; margin-right: auto;">约束二</span>
+      <h2 class="title" style="text-align: center;">上下文越长，模型表现越差</h2>
+    </div>
+    <div class="s20"></div>
+    <div class="fragment f" data-fragment-index="1">
+      <div class="img-slot" style="width: 100%; max-width: 820px; margin: 0 auto; aspect-ratio: 16/9;">
+        <img src="img-08-attention-dilution.png" alt="短上下文注意力集中 vs 长上下文注意力分散">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 过渡：它凭什么能预测？ ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <h1 class="hero" style="font-size: 80px;">
+    它凭什么能预测<span class="c-b" style="font-weight: 300;">？</span>
+  </h1>
+</section>
+
+<!-- ===== 预训练（合并版） ===== -->
+<section class="center-slide" style="padding: 40px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="text-align: center; width: 100%;">
+    <div class="fragment f" data-fragment-index="0">
+      <h2 class="title" style="font-size: 48px; text-align: center;">预训练</h2>
+    </div>
+    <div class="s12"></div>
+    <div class="fragment f" data-fragment-index="1">
+      <p style="font-size: 20px; color: var(--ink-70); text-align: center;">拿互联网上几乎所有的文本，训练模型预测下一个词</p>
+    </div>
+    <div class="s20"></div>
+
+    <!-- 切换区：先显示原理图，再切换为对话样本 -->
+    <div style="position: relative; width: 100%; min-height: 460px;">
+
+      <!-- 原理图：fragment 2 出现，fragment 3 时消失 -->
+      <div class="fragment fade-in-then-out" data-fragment-index="2" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 780px;">
+        <div class="img-slot" style="width: 100%; aspect-ratio: 16/9;">
+          <img src="img-10-pretrain.png" alt="预训练：海量文本训练模型预测下一个词">
+        </div>
+      </div>
+
+      <!-- 对话样本容器 -->
+      <div style="position: absolute; top: 0; left: 0; width: 100%;">
+        <div style="display: flex; gap: 24px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: stretch;">
+
+          <!-- 左：第一次运行 (fragment 3) -->
+          <div class="chat-card fragment f" data-fragment-index="3">
+            <div class="chat-card-header">
+              <span class="chat-dot" style="background: var(--rose);"></span>
+              <span class="chat-dot" style="background: var(--orange);"></span>
+              <span class="chat-dot" style="background: var(--green);"></span>
+              <span class="chat-card-title">llama-3-chinese-8b</span>
+            </div>
+            <div class="chat-row chat-row-user">
+              <div class="chat-bubble chat-bubble-user">世界第一高峰是</div>
+            </div>
+            <div class="chat-row chat-row-bot">
+              <div class="chat-bubble chat-bubble-bot">
+                位于中国新疆喀什地区境内的乔戈里峰，海拔 8611 米。《中华人民共和国国家标准化体系建设规划（2016-2020年）》日前出台，到 2020 年，我国将基本建成具有全球影响力、国际先进水平的现代国家标准体系。下一步要实施新一轮"五项行动计划"，重点推动产业创新发展和工业转型升级……
+              </div>
+            </div>
+          </div>
+
+          <!-- 右：第二次运行 (fragment 4) -->
+          <div class="chat-card fragment f" data-fragment-index="4">
+            <div class="chat-card-header">
+              <span class="chat-dot" style="background: var(--rose);"></span>
+              <span class="chat-dot" style="background: var(--orange);"></span>
+              <span class="chat-dot" style="background: var(--green);"></span>
+              <span class="chat-card-title">llama-3-chinese-8b</span>
+            </div>
+            <div class="chat-row chat-row-user">
+              <div class="chat-bubble chat-bubble-user">世界第一高峰是</div>
+            </div>
+            <div class="chat-row chat-row-bot">
+              <div class="chat-bubble chat-bubble-bot">
+                A. 珠穆朗玛峰<br>
+                B. 阿康西加山<br>
+                C. 艾伯特·爱因斯坦<br>
+                D. 埃弗莱斯特峰
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 监督微调 SFT ===== -->
+<section class="center-slide" style="padding: 48px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="text-align: center; width: 100%;">
+    <div class="fragment f" data-fragment-index="0">
+      <h2 class="title" style="font-size: 44px; text-align: center;">监督微调 <span class="c-40" style="font-size: 24px; font-weight: 500;">SFT</span></h2>
+    </div>
+    <div class="s12"></div>
+    <div class="fragment f" data-fragment-index="1">
+      <p style="font-size: 18px; color: var(--ink-70); text-align: center;">人工写好大量高质量的「问-答」样本，训练模型按这种方式回话</p>
+    </div>
+    <div class="s28"></div>
+
+    <div style="display: flex; gap: 24px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: stretch;">
+
+      <!-- 样本 1 -->
+      <div class="chat-card fragment f" data-fragment-index="2">
+        <div class="chat-card-header">
+          <span class="chat-dot" style="background: var(--rose);"></span>
+          <span class="chat-dot" style="background: var(--orange);"></span>
+          <span class="chat-dot" style="background: var(--green);"></span>
+          <span class="chat-card-title">训练样本 #1</span>
+        </div>
+
+        <div class="chat-row chat-row-user">
+          <div class="chat-bubble chat-bubble-user">三原色是什么？</div>
+        </div>
+
+        <div class="chat-row chat-row-bot">
+          <div class="chat-bubble chat-bubble-bot">
+            三原色是红色、蓝色和黄色。这些颜色被称为原色，是因为它们无法通过混合其他颜色得到，而所有其他颜色都可以通过以不同比例组合它们来产生。
+          </div>
+        </div>
+      </div>
+
+      <!-- 样本 2 -->
+      <div class="chat-card fragment f" data-fragment-index="3">
+        <div class="chat-card-header">
+          <span class="chat-dot" style="background: var(--rose);"></span>
+          <span class="chat-dot" style="background: var(--orange);"></span>
+          <span class="chat-dot" style="background: var(--green);"></span>
+          <span class="chat-card-title">训练样本 #2</span>
+        </div>
+
+        <div class="chat-row chat-row-user">
+          <div class="chat-bubble chat-bubble-user">给出三条保持健康的建议。</div>
+        </div>
+
+        <div class="chat-row chat-row-bot">
+          <div class="chat-bubble chat-bubble-bot">
+            1. 保持均衡饮食，多吃水果和蔬菜。<br>
+            2. 经常锻炼，让身体保持活力和强壮。<br>
+            3. 保证充足睡眠，作息规律。
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== 强化学习 RL ===== -->
+<section class="center-slide" style="padding: 48px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="text-align: center; width: 100%;">
+    <div class="fragment f" data-fragment-index="0">
+      <h2 class="title" style="font-size: 44px; text-align: center;">强化学习 <span class="c-40" style="font-size: 24px; font-weight: 500;">RL</span></h2>
+    </div>
+    <div class="s12"></div>
+    <div class="fragment f" data-fragment-index="1">
+      <p style="font-size: 18px; color: var(--ink-70); text-align: center;">不教模型怎么做，让它自己尝试，只判断结果对不对</p>
+    </div>
+    <div class="s28"></div>
+
+    <div style="display: flex; gap: 24px; width: 100%; max-width: 1100px; margin: 0 auto; align-items: stretch;">
+
+      <!-- 样本 1：数学题 -->
+      <div class="chat-card fragment f" data-fragment-index="2">
+        <div class="chat-card-header">
+          <span class="chat-dot" style="background: var(--rose);"></span>
+          <span class="chat-dot" style="background: var(--orange);"></span>
+          <span class="chat-dot" style="background: var(--green);"></span>
+          <span class="chat-card-title">训练样本 #1</span>
+        </div>
+
+        <div class="chat-row chat-row-user">
+          <div class="chat-bubble chat-bubble-user">27 + 156 = ?</div>
+        </div>
+
+        <div class="chat-row chat-row-bot">
+          <div class="chat-bubble chat-bubble-bot">
+            先算 27 + 150 = 177，再加 6，<br>得到 183。
+          </div>
+        </div>
+
+        <div class="chat-card-footer chat-footer-pass">
+          <span class="chat-footer-mark">✓</span>
+          <span class="chat-footer-text">答案正确 → 强化这条思路</span>
+        </div>
+      </div>
+
+      <!-- 样本 2：代码题 -->
+      <div class="chat-card fragment f" data-fragment-index="3">
+        <div class="chat-card-header">
+          <span class="chat-dot" style="background: var(--rose);"></span>
+          <span class="chat-dot" style="background: var(--orange);"></span>
+          <span class="chat-dot" style="background: var(--green);"></span>
+          <span class="chat-card-title">训练样本 #2</span>
+        </div>
+
+        <div class="chat-row chat-row-user">
+          <div class="chat-bubble chat-bubble-user">写一个 Python 函数，返回两数之和。</div>
+        </div>
+
+        <div class="chat-row chat-row-bot">
+          <div class="chat-bubble chat-bubble-bot" style="font-family: var(--mono); font-size: 12.5px;">
+            def add(a, b):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;return a + b
+          </div>
+        </div>
+
+        <div class="chat-card-footer chat-footer-pass">
+          <span class="chat-footer-mark">✓</span>
+          <span class="chat-footer-text">测试通过 → 强化这条思路</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== LLM 的底层缺陷 ===== -->
+<section class="center-slide" style="padding: 32px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="text-align: center; width: 100%;">
+    <div class="fragment f" data-fragment-index="0">
+      <h2 class="title" style="font-size: 40px; text-align: center;">LLM 的出厂设置</h2>
+    </div>
+    <div class="s20"></div>
+
+    <!-- 第一行：3 张卡片 -->
+    <div style="display: flex; gap: 18px; width: 100%; max-width: 1140px; margin: 0 auto; align-items: stretch;">
+
+      <!-- 缺陷 1：没有记忆 -->
+      <div class="defect-card fragment f" data-fragment-index="1">
+        <div class="defect-title">没有记忆</div>
+        <div class="defect-why">模型只能看到当前窗口里的 token，窗口之外的对它来说就是不存在</div>
+        <div class="defect-action">想让它知道什么，就主动放进上下文</div>
+      </div>
+
+      <!-- 缺陷 2：看得越多，看得越浅 -->
+      <div class="defect-card fragment f" data-fragment-index="2">
+        <div class="defect-title">看得越多，看得越浅</div>
+        <div class="defect-why">自注意力是零和的——上下文越长，每个 token 分到的注意力越少，关键信息容易被淹没</div>
+        <div class="defect-action">控制上下文长度；任务大就拆成上下文无关的子任务</div>
+      </div>
+
+      <!-- 缺陷 3：被自己的上下文带偏 -->
+      <div class="defect-card fragment f" data-fragment-index="3">
+        <div class="defect-title">被自己的上下文带偏</div>
+        <div class="defect-why">预训练就是「看前文，写下一个词」，走上错误方向后很难自己掉头</div>
+        <div class="defect-action">发现走偏及时介入；必要时开新对话重来</div>
+      </div>
+
+    </div>
+
+    <div class="s16"></div>
+
+    <!-- 第二行：2 张卡片，居中 -->
+    <div style="display: flex; gap: 18px; width: 100%; max-width: 1140px; margin: 0 auto; justify-content: center; align-items: stretch;">
+
+      <!-- 缺陷 4：看起来很有道理（SFT） -->
+      <div class="defect-card fragment f" data-fragment-index="4" style="flex: 0 0 calc((100% - 36px) / 3);">
+        <div class="defect-title">看起来很有道理</div>
+        <div class="defect-why">SFT 教它生成「像样的回答」——像样不等于对，容易被语气说服</div>
+        <div class="defect-action">用客观方式验证结果，不要只看它说得多确信</div>
+      </div>
+
+      <!-- 缺陷 5：擅长有明确反馈的问题（RL） -->
+      <div class="defect-card fragment f" data-fragment-index="5" style="flex: 0 0 calc((100% - 36px) / 3);">
+        <div class="defect-title">擅长有明确反馈的问题</div>
+        <div class="defect-why">RL 在有客观对错的任务上反复打过分，标准模糊的任务表现就不稳定</div>
+        <div class="defect-action">尽量把任务转化成「能验证对错」的形式</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 好的 AI 任务公式 ===== -->
+<section class="center-slide" style="padding: 48px 80px; display: none;" hidden="" aria-hidden="true">
+  <div style="text-align: left; max-width: 820px;">
+
+    <p style="font-family: var(--display); font-size: 42px; font-weight: 800; color: var(--ink); letter-spacing: -0.035em;">好的 <span class="hl-o c-o">AI 任务</span> <span class="c-o">=</span></p>
+    <div class="s36"></div>
+
+    <div class="fragment f" data-fragment-index="0" style="display: flex; gap: 20px; align-items: baseline; margin-bottom: 28px; padding-left: 8px;">
+      <span style="font-family: var(--display); font-size: 28px; font-weight: 800; color: var(--ink-20); flex-shrink: 0; width: 28px; text-align: right;"></span>
+      <div>
+        <p style="font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--ink); letter-spacing: -0.025em; margin-bottom: 8px;">定义清晰</p>
+        <p class="body" style="font-size: 17px;">"做完了是什么样"能写成无歧义的一段话</p>
+        <p class="body" style="font-size: 17px; color: var(--ink-40);">模型不会读心术</p>
+      </div>
+    </div>
+
+    <div class="fragment f" data-fragment-index="1" style="display: flex; gap: 20px; align-items: baseline; margin-bottom: 28px; padding-left: 8px;">
+      <span style="font-family: var(--display); font-size: 28px; font-weight: 800; color: var(--orange); flex-shrink: 0; width: 28px; text-align: right;">+</span>
+      <div>
+        <p style="font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--ink); letter-spacing: -0.025em; margin-bottom: 8px;">信息完备</p>
+        <p class="body" style="font-size: 17px;">做这件事需要知道的一切，都能塞进上下文里</p>
+        <p class="body" style="font-size: 17px; color: var(--ink-40);">缺的部分全靠模型自由发挥</p>
+      </div>
+    </div>
+
+    <div class="fragment f" data-fragment-index="2" style="display: flex; gap: 20px; align-items: baseline; margin-bottom: 36px; padding-left: 8px;">
+      <span style="font-family: var(--display); font-size: 28px; font-weight: 800; color: var(--orange); flex-shrink: 0; width: 28px; text-align: right;">+</span>
+      <div>
+        <p style="font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--ink); letter-spacing: -0.025em; margin-bottom: 8px;">可验证</p>
+        <p class="body" style="font-size: 17px;">结果能映射成你能直接检查的标准</p>
+        <p class="body" style="font-size: 17px; color: var(--ink-40);">你亲自验，而不是 AI 告诉你"完成了"</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 章节过渡：Agent ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <h1 class="hero" style="font-size: 48px; line-height: 1.35; max-width: 880px; margin: 0 auto;">
+    一个只会预测下一个词的模型<br>
+    <span class="c-b">怎么帮你写代码、搜信息、改文件？</span>
+  </h1>
+</section>
+
+<!-- ===== Agent = 模型 + Harness ===== -->
+<section class="center-slide" style="padding: 48px 80px; display: none;" hidden="" aria-hidden="true">
+  <div style="width: 100%; text-align: center;">
+
+    <div class="fragment f" data-fragment-index="0">
+      <h1 class="hero" style="font-size: 72px; margin-top: -40px;">Agent</h1>
+    </div>
+    <div class="s48"></div>
+
+    <div style="max-width: 820px; margin: 0 auto; position: relative;">
+
+      <div class="fragment f" data-fragment-index="2" style="position: absolute; inset: -20px -24px; border: 2.5px solid rgba(201,95,109,0.2); border-radius: 20px; pointer-events: none;">
+        <span style="position: absolute; top: -12px; left: 28px; background: var(--bg); padding: 0 12px; font-family: var(--display); font-size: 16px; font-weight: 700; color: var(--rose);">Harness · 程序代码</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px; position: relative; z-index: 1;">
+
+        <div class="fragment f" data-fragment-index="3" style="flex: 1; text-align: left; padding: 16px 18px;">
+          <p style="font-size: 19px; color: var(--ink); font-weight: 600; margin-bottom: 10px;">决定上下文里有什么</p>
+          <p style="font-size: 15px; color: var(--ink-40); line-height: 1.6;">系统提示词 · CLAUDE.md<br>工具列表 · Skill</p>
+        </div>
+
+        <span class="fragment f" data-fragment-index="3" style="font-size: 22px; color: var(--ink-20); flex-shrink: 0;">→</span>
+
+        <div class="fragment f" data-fragment-index="1" style="flex: 0 0 auto; background: rgba(74,127,196,0.06); border: 2.5px solid rgba(74,127,196,0.2); border-radius: 14px; padding: 28px 40px; text-align: center;">
+          <p style="font-family: var(--display); font-size: 28px; font-weight: 700; color: var(--blue);">模型</p>
+          <p style="font-size: 16px; color: var(--ink-40); margin-top: 8px;">预测下一个 token</p>
+        </div>
+
+        <span class="fragment f" data-fragment-index="4" style="font-size: 22px; color: var(--ink-20); flex-shrink: 0;">→</span>
+
+        <div class="fragment f" data-fragment-index="4" style="flex: 1; text-align: left; padding: 16px 18px;">
+          <p style="font-size: 19px; color: var(--ink); font-weight: 600; margin-bottom: 10px;">决定如何处理输出</p>
+          <p style="font-size: 15px; color: var(--ink-40); line-height: 1.6;">工具调用 · Hook</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== Agent 如何工作（机制图 + 第一视角案例，合并版） ===== -->
+<section class="center-slide" style="padding: 28px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 800px;">
+
+    <h2 class="title" style="font-size: 40px; text-align: center; margin: 0 0 14px;">Agent 如何工作</h2>
+
+    <!-- 共享区域：流程图与第一视角卷轴叠加，先后切换 -->
+    <div style="position: relative; min-height: 590px;">
+
+      <!-- 流程图：fragment 0-6 依次显示，整体在 7 时淡出 -->
+      <div class="fragment fade-out" data-fragment-index="7" style="position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: center; transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
+        <svg viewBox="0 0 380 460" width="420" style="display: block;">
+
+          <!-- f0：上下文（含系统提示词 + 用户消息） -->
+          <g class="fragment f" data-fragment-index="0">
+            <rect x="100" y="8" width="180" height="80" rx="10" fill="#F3EDE4" stroke="rgba(43,45,46,0.20)" stroke-width="1.5"></rect>
+            <text x="190" y="24" text-anchor="middle" font-family="Outfit, 'Noto Sans SC', sans-serif" font-size="13" font-weight="700" fill="#2B2D2E">上下文</text>
+            <line x1="112" y1="32" x2="268" y2="32" stroke="rgba(43,45,46,0.12)" stroke-width="1"></line>
+            <text x="190" y="48" text-anchor="middle" font-family="Inter, 'Noto Sans SC', sans-serif" font-size="11" fill="rgba(43,45,46,0.70)">系统提示词</text>
+            <text x="190" y="64" text-anchor="middle" font-family="Inter, 'Noto Sans SC', sans-serif" font-size="11" fill="rgba(43,45,46,0.70)">用户消息</text>
+          </g>
+
+          <!-- f1：模型 + 上下文→模型箭头 -->
+          <g class="fragment f" data-fragment-index="1">
+            <line x1="190" y1="92" x2="190" y2="108" stroke="#6B6D6E" stroke-width="1.5" marker-end="url(#arr-g)"></line>
+            <text x="198" y="105" font-family="Inter, sans-serif" font-size="10" fill="rgba(43,45,46,0.55)">读</text>
+            <rect x="115" y="115" width="150" height="60" rx="10" fill="rgba(74,127,196,0.10)" stroke="#4A7FC4" stroke-width="1.5"></rect>
+            <text x="190" y="142" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#4A7FC4">模型</text>
+            <text x="190" y="162" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="rgba(43,45,46,0.60)">输出一段文本</text>
+          </g>
+
+          <!-- f2：Harness + 模型→Harness箭头 -->
+          <g class="fragment f" data-fragment-index="2">
+            <line x1="190" y1="177" x2="190" y2="220" stroke="#6B6D6E" stroke-width="1.5" marker-end="url(#arr-g)"></line>
+            <rect x="100" y="225" width="180" height="68" rx="10" fill="rgba(201,95,109,0.10)" stroke="#C95F6D" stroke-width="1.5"></rect>
+            <text x="190" y="252" text-anchor="middle" font-family="Outfit, sans-serif" font-size="16" font-weight="700" fill="#C95F6D">Harness</text>
+            <text x="190" y="273" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="rgba(43,45,46,0.60)">里面有工具调用？</text>
+          </g>
+
+          <!-- f3：左分支 有 + 执行工具 -->
+          <g class="fragment f" data-fragment-index="3">
+            <path d="M 130,295 Q 75,330 75,365" stroke="#4A7FC4" stroke-width="1.5" fill="none" marker-end="url(#arr-b)"></path>
+            <text x="138" y="316" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#4A7FC4">有</text>
+            <rect x="20" y="370" width="110" height="56" rx="10" fill="rgba(74,127,196,0.06)" stroke="rgba(74,127,196,0.45)" stroke-width="1.5"></rect>
+            <text x="75" y="394" text-anchor="middle" font-family="Outfit, sans-serif" font-size="13" font-weight="700" fill="#4A7FC4">执行工具</text>
+            <text x="75" y="411" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="rgba(43,45,46,0.60)">结果回上下文</text>
+          </g>
+
+          <!-- f4：虚线回路（执行结果写回上下文，停在上下文 box 左侧外） -->
+          <g class="fragment f" data-fragment-index="4">
+            <path d="M 20,398 L 8,398 L 8,48 L 95,48" stroke="#4A7FC4" stroke-width="1.5" fill="none" stroke-dasharray="4,4" opacity="0.7" marker-end="url(#arr-b)"></path>
+          </g>
+
+          <!-- f5：上下文里多一行「+ 工具结果」 -->
+          <g class="fragment f" data-fragment-index="5">
+            <text x="190" y="80" text-anchor="middle" font-family="Inter, 'Noto Sans SC', sans-serif" font-size="11" font-weight="600" fill="#D98A4A">＋ 工具结果</text>
+          </g>
+
+          <!-- f6：右分支 没有 + 给用户（循环退出条件） -->
+          <g class="fragment f" data-fragment-index="6">
+            <path d="M 250,295 Q 305,330 305,365" stroke="#5BA67A" stroke-width="1.5" fill="none" marker-end="url(#arr-gr)"></path>
+            <text x="226" y="316" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#5BA67A">没有</text>
+            <rect x="250" y="370" width="110" height="56" rx="10" fill="rgba(91,166,122,0.10)" stroke="#5BA67A" stroke-width="1.5"></rect>
+            <text x="305" y="394" text-anchor="middle" font-family="Outfit, sans-serif" font-size="13" font-weight="700" fill="#5BA67A">给用户</text>
+            <text x="305" y="411" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="rgba(43,45,46,0.60)">循环结束 ✓</text>
+          </g>
+
+        </svg>
+      </div>
+
+      <!-- 第一视角卷轴：流程图淡出后，让观众化身 Agent，亲眼看着上下文一行一行长出来 -->
+      <div style="position: absolute; left: 0; right: 0; top: 0;">
+
+        <!-- 上下文面板：模拟 Agent 看到的对话流，从上往下一行行生长。整个面板也作为 fragment 7 出现，避免在流程图阶段就把底框露出来。 -->
+        <div class="fragment f" data-fragment-index="7" style="max-width: 760px; margin: 0 auto; background: var(--card); border: 1px solid var(--ink-10); border-radius: 14px; padding: 4px 22px; box-shadow: var(--sh-md); overflow: hidden;">
+
+          <!-- 用户消息（fragment 7：随视角提示一起出现） -->
+          <div class="fragment f" data-fragment-index="7" style="display: flex; gap: 16px; padding: 12px 0;">
+            <div style="flex-shrink: 0; width: 64px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 0.10em; text-transform: uppercase; padding-top: 2px;">用户</div>
+            <div style="flex: 1; font-size: 14.5px; color: var(--ink); line-height: 1.55;">我明天该穿啥？</div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- 我（模型）回合 1：思考 + 写一个 tool_call -->
+          <div class="fragment f" data-fragment-index="8" style="display: flex; gap: 16px; padding: 12px 0;">
+            <div style="flex-shrink: 0; width: 64px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.10em; text-transform: uppercase; padding-top: 2px;">模型</div>
+            <div style="flex: 1;">
+              <div style="font-size: 14.5px; color: var(--ink); line-height: 1.55;">先看明天的天气。</div>
+              <div style="margin-top: 6px; padding: 6px 10px; background: rgba(201,95,109,0.07); border-left: 2px solid var(--rose); border-radius: 0 4px 4px 0; font-family: var(--mono); font-size: 12.5px; color: var(--ink); display: inline-block;">→ tool_call <span style="color: var(--rose); font-weight: 700;">weather</span>(明天, 北京)</div>
+            </div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- Harness 把工具结果塞回上下文 1（整条带玫红色背景 + 左竖线，凸显这是外部注入） -->
+          <div class="fragment f" data-fragment-index="9" style="display: flex; gap: 16px; padding: 11px 22px 11px 19px; margin: 0 -22px; background: rgba(201,95,109,0.06); border-left: 3px solid var(--rose);">
+            <div style="flex-shrink: 0; width: 61px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--rose); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px;">Harness</div>
+            <div style="flex: 1; font-size: 14.5px; color: var(--ink); line-height: 1.55;">15–22 ℃，下午有阵雨</div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- 我（模型）回合 2：再读一次刚长出来的上下文，决定再调一个工具 -->
+          <div class="fragment f" data-fragment-index="10" style="display: flex; gap: 16px; padding: 12px 0;">
+            <div style="flex-shrink: 0; width: 64px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.10em; text-transform: uppercase; padding-top: 2px;">模型</div>
+            <div style="flex: 1;">
+              <div style="font-size: 14.5px; color: var(--ink); line-height: 1.55;">还得看你明天有什么安排。</div>
+              <div style="margin-top: 6px; padding: 6px 10px; background: rgba(201,95,109,0.07); border-left: 2px solid var(--rose); border-radius: 0 4px 4px 0; font-family: var(--mono); font-size: 12.5px; color: var(--ink); display: inline-block;">→ tool_call <span style="color: var(--rose); font-weight: 700;">calendar</span>(明天)</div>
+            </div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- Harness 把工具结果塞回上下文 2 -->
+          <div class="fragment f" data-fragment-index="11" style="display: flex; gap: 16px; padding: 10px 22px 10px 19px; margin: 0 -22px; background: rgba(201,95,109,0.06); border-left: 3px solid var(--rose);">
+            <div style="flex-shrink: 0; width: 61px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--rose); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px;">Harness</div>
+            <div style="flex: 1; font-size: 14.5px; color: var(--ink); line-height: 1.55;">下午 3 点 · <span style="color: var(--orange); font-weight: 700;">见客户</span></div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- 我（模型）回合 3：写操作——根据前面查到的，决定主动设一个提醒（改变外部状态） -->
+          <div class="fragment f" data-fragment-index="12" style="display: flex; gap: 16px; padding: 11px 0;">
+            <div style="flex-shrink: 0; width: 64px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.10em; text-transform: uppercase; padding-top: 2px;">模型</div>
+            <div style="flex: 1;">
+              <div style="font-size: 14.5px; color: var(--ink); line-height: 1.55;">下午要见客户、可能下雨，给你设个出门提醒。</div>
+              <div style="margin-top: 6px; padding: 6px 10px; background: rgba(201,95,109,0.07); border-left: 2px solid var(--rose); border-radius: 0 4px 4px 0; font-family: var(--mono); font-size: 12.5px; color: var(--ink); display: inline-block;">→ tool_call <span style="color: var(--rose); font-weight: 700;">reminder.add</span>(明早 7:00, "带伞 + 换正装")</div>
+            </div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- Harness 执行写操作并把结果塞回上下文 3（外部状态已改变） -->
+          <div class="fragment f" data-fragment-index="13" style="display: flex; gap: 16px; padding: 10px 22px 10px 19px; margin: 0 -22px; background: rgba(201,95,109,0.06); border-left: 3px solid var(--rose);">
+            <div style="flex-shrink: 0; width: 61px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--rose); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px;">Harness</div>
+            <div style="flex: 1; font-size: 14.5px; color: var(--ink); line-height: 1.55;"><span style="color: var(--green); font-weight: 700;">✓</span> 已加入提醒 · 明早 7:00 触发</div>
+          </div>
+
+          <div style="height: 1px; background: var(--ink-10);"></div>
+
+          <!-- 我（模型）最终回合：信息够了 + 提醒也设好了，直接回答，没写 tool_call -->
+          <div class="fragment f" data-fragment-index="14" style="display: flex; gap: 16px; padding: 11px 0;">
+            <div style="flex-shrink: 0; width: 64px; font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.10em; text-transform: uppercase; padding-top: 2px;">模型</div>
+            <div style="flex: 1; font-size: 14.5px; color: var(--ink); line-height: 1.55;">早上加件薄外套，下午别穿 T 恤要见客户。出门提醒已经设到 7 点。</div>
+          </div>
+
+        </div>
+
+        <!-- 极简的循环终点标记（呼应流程图右下角"循环结束 ✓"） -->
+        <div class="fragment f" data-fragment-index="15" style="text-align: center; margin-top: 12px;">
+          <span style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px; background: rgba(91,166,122,0.08); border: 1.5px solid rgba(91,166,122,0.40); border-radius: 999px; font-family: var(--display); font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: 0.10em; text-transform: uppercase;">循环结束 ✓</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== Claude Code 的上下文窗口 ===== -->
+<section class="center-slide" style="padding: 28px 60px; display: none;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 1080px;">
+
+    <div style="background: var(--card); border: 1px solid var(--ink-10); border-radius: 14px; padding: 14px 22px 18px; box-shadow: var(--sh-lg);">
+
+      <div style="text-align: center; padding-bottom: 12px; border-bottom: 1px solid var(--ink-10); margin-bottom: 14px;">
+        <span style="font-family: var(--display); font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -0.005em;">Claude Code 的上下文窗口</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 9px;">
+
+        <!-- 1. 静态系统提示词 -->
+        <div class="fragment f" data-fragment-index="0" style="display: flex; align-items: stretch; border-radius: 7px; overflow: hidden; background: rgba(74,127,196,0.07); border: 1px solid rgba(74,127,196,0.22);">
+          <span style="width: 5px; background: var(--blue); flex-shrink: 0;"></span>
+          <div style="padding: 10px 14px; flex: 1; text-align: center;">
+            <div style="font-family: var(--display); font-size: 12.5px; font-weight: 700; color: var(--blue); letter-spacing: 0.04em; margin-bottom: 5px;">静态系统提示词</div>
+            <div style="font-size: 14px; color: var(--ink); line-height: 1.5;">你是 Claude Code · 该如何完成任务 · 该如何用工具 · 输出风格</div>
+          </div>
+        </div>
+
+        <!-- 2. 缓存点 · 全球通用 -->
+        <div class="fragment f" data-fragment-index="1" style="padding: 8px 14px; background: rgba(91,166,122,0.09); border: 1px dashed rgba(91,166,122,0.50); border-radius: 7px; text-align: center;">
+          <span style="font-size: 14px; color: var(--green); margin-right: 6px;">✦</span>
+          <span style="font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--green); letter-spacing: 0.02em;">缓存点 · 全球通用</span>
+        </div>
+
+        <!-- 3. 动态系统提示词 -->
+        <div class="fragment f" data-fragment-index="2" style="display: flex; align-items: stretch; border-radius: 7px; overflow: hidden; background: rgba(74,127,196,0.04); border: 1px solid rgba(74,127,196,0.18);">
+          <span style="width: 5px; background: var(--blue); opacity: 0.55; flex-shrink: 0;"></span>
+          <div style="padding: 10px 14px; flex: 1; text-align: center;">
+            <div style="font-family: var(--display); font-size: 12.5px; font-weight: 700; color: var(--blue); letter-spacing: 0.04em; margin-bottom: 5px; opacity: 0.85;">动态系统提示词</div>
+            <div style="font-size: 14px; color: var(--ink); line-height: 1.5;">工作目录 · 操作系统 · git 状态</div>
+          </div>
+        </div>
+
+        <!-- 4. 工具列表 -->
+        <div class="fragment f" data-fragment-index="3" style="display: flex; align-items: stretch; border-radius: 7px; overflow: hidden; background: rgba(201,95,109,0.07); border: 1px solid rgba(201,95,109,0.22);">
+          <span style="width: 5px; background: var(--rose); flex-shrink: 0;"></span>
+          <div style="padding: 10px 16px; flex: 1; text-align: center;">
+            <div style="font-family: var(--display); font-size: 12.5px; font-weight: 700; color: var(--rose); letter-spacing: 0.04em; margin-bottom: 7px;">工具列表</div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px 18px; font-size: 13.5px; color: var(--ink); line-height: 1.4; max-width: 720px; margin: 0 auto;">
+              <div><span style="color: var(--rose); font-weight: 700;">Grep</span> 搜代码</div>
+              <div><span style="color: var(--rose); font-weight: 700;">Read</span> 读文件</div>
+              <div><span style="color: var(--rose); font-weight: 700;">Edit</span> 改文件</div>
+              <div><span style="color: var(--rose); font-weight: 700;">Bash</span> 跑命令</div>
+              <div><span style="color: var(--rose); font-weight: 700;">WebSearch</span> 搜网页</div>
+              <div><span style="color: var(--rose); font-weight: 700;">Agent</span> 派子 Agent</div>
+              <div><span style="color: var(--rose); font-weight: 700;">Skill</span> 触发一个 skill</div>
+              <div><span style="color: var(--rose); font-weight: 700;">MCP: …</span> 外部接的</div>
+            </div>
+            <div style="margin-top: 7px; font-size: 12.5px; color: var(--ink-70); line-height: 1.5;">每个工具：叫什么名字 · 能干什么 · 模型怎么调</div>
+          </div>
+        </div>
+
+        <!-- 5. 缓存点 2 -->
+        <div class="fragment f" data-fragment-index="4" style="padding: 8px 14px; background: rgba(91,166,122,0.09); border: 1px dashed rgba(91,166,122,0.50); border-radius: 7px; text-align: center;">
+          <span style="font-size: 14px; color: var(--green); margin-right: 6px;">✦</span>
+          <span style="font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--green); letter-spacing: 0.02em;">缓存点 2</span>
+        </div>
+
+        <!-- 6. CLAUDE.md（全局 + 项目两层） -->
+        <div class="fragment f" data-fragment-index="5" style="display: flex; align-items: stretch; border-radius: 7px; overflow: hidden; background: rgba(217,138,74,0.07); border: 1px solid rgba(217,138,74,0.22);">
+          <span style="width: 5px; background: var(--orange); flex-shrink: 0;"></span>
+          <div style="padding: 10px 14px; flex: 1; text-align: center;">
+            <div style="font-family: var(--display); font-size: 12.5px; font-weight: 700; color: var(--orange); letter-spacing: 0.04em; margin-bottom: 5px;">CLAUDE.md</div>
+            <div style="font-size: 14px; color: var(--ink); line-height: 1.5;">
+              <span style="color: var(--orange); font-weight: 700;">全局 ~/.claude/CLAUDE.md</span> <span style="color: var(--ink-40); margin: 0 8px;">+</span> <span style="color: var(--orange); font-weight: 700;">项目根 CLAUDE.md</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. 可用 Skill 列表 -->
+        <div class="fragment f" data-fragment-index="6" style="display: flex; align-items: stretch; border-radius: 7px; overflow: hidden; background: rgba(217,138,74,0.07); border: 1px solid rgba(217,138,74,0.22);">
+          <span style="width: 5px; background: var(--orange); flex-shrink: 0;"></span>
+          <div style="padding: 10px 16px; flex: 1; text-align: center;">
+            <div style="font-family: var(--display); font-size: 12.5px; font-weight: 700; color: var(--orange); letter-spacing: 0.04em; margin-bottom: 7px;">可用 Skill 列表</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px 28px; font-size: 13.5px; color: var(--ink); line-height: 1.4; max-width: 760px; margin: 0 auto;">
+              <div><span style="color: var(--orange); font-weight: 700;">claude-design</span> 做演示和 UI 设计</div>
+              <div><span style="color: var(--orange); font-weight: 700;">deep-research</span> 多源调研写报告</div>
+              <div><span style="color: var(--orange); font-weight: 700;">context-engineer</span> 写 Skill / Rule / Hook</div>
+              <div><span style="color: var(--orange); font-weight: 700;">feynman-tutor</span> 一对一讲清一个主题</div>
+              <div style="grid-column: 1 / -1; color: var(--ink-40); font-size: 12.5px;">… 还有 26 个</div>
+            </div>
+            <div style="margin-top: 7px; font-size: 12.5px; color: var(--ink-70); line-height: 1.5;">每个 Skill：叫什么名字 · 能做什么</div>
+          </div>
+        </div>
+
+        <!-- 8. 你的第一条消息 -->
+        <div class="fragment f" data-fragment-index="7" style="padding: 10px 14px; background: rgba(43,45,46,0.05); border: 1.5px solid var(--ink); border-radius: 7px; text-align: center;">
+          <span style="font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em;">你的第一条消息</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 上下文 × 3（neta《让子弹飞》） ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center;">
+    <div class="fragment f" data-fragment-index="0">
+      <h1 class="hero" style="font-size: 72px; margin: 0 0 22px; line-height: 1.1;">上下文，</h1>
+    </div>
+    <div class="fragment f" data-fragment-index="1">
+      <h1 class="hero" style="font-size: 72px; margin: 0 0 22px; line-height: 1.1;">上下文，</h1>
+    </div>
+    <div class="fragment f" data-fragment-index="2">
+      <h1 class="hero" style="font-size: 82px; line-height: 1.1; color: var(--rose); margin: 0;">还是他妈的上下文。</h1>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 一切都是上下文 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center;">
+
+    <!-- 5 个项目水平排列，一个个落入 -->
+    <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 64px;">
+      <span class="fragment f" data-fragment-index="0" style="font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--ink); padding: 12px 26px; background: var(--card); border: 1px solid var(--ink-10); border-radius: 10px;">提示词</span>
+      <span class="fragment f" data-fragment-index="1" style="font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--ink); padding: 12px 26px; background: var(--card); border: 1px solid var(--ink-10); border-radius: 10px;">Skill</span>
+      <span class="fragment f" data-fragment-index="2" style="font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--ink); padding: 12px 26px; background: var(--card); border: 1px solid var(--ink-10); border-radius: 10px;">MCP</span>
+      <span class="fragment f" data-fragment-index="3" style="font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--ink); padding: 12px 26px; background: var(--card); border: 1px solid var(--ink-10); border-radius: 10px;">RAG</span>
+      <span class="fragment f" data-fragment-index="4" style="font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--ink); padding: 12px 26px; background: var(--card); border: 1px solid var(--ink-10); border-radius: 10px;">Memory</span>
+    </div>
+
+    <!-- 压轴：一切都是上下文 -->
+    <div class="fragment f" data-fragment-index="5">
+      <h1 class="hero" style="font-size: 80px; line-height: 1.1;">一切都是<span style="color: var(--blue);">上下文</span></h1>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 章节过渡：如何写好上下文 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <h1 class="hero" style="font-size: 80px;">
+    如何写好<span class="c-b">上下文</span><span class="c-b" style="font-weight: 300;">？</span>
+  </h1>
+</section>
+
+<!-- ===== 一个示范：Claude Code 内部"如何表达"提示词 ===== -->
+<section class="center-slide" style="padding: 48px 80px; display: block;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 820px; margin: 0 auto;">
+
+    <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px;">
+      <h2 style="font-family: var(--display); font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">与用户沟通</h2>
+      <span style="font-family: var(--mono); font-size: 11px; color: var(--ink-40); letter-spacing: 0.08em; text-transform: uppercase;">Claude Code 内部提示词节选</span>
+    </div>
+
+    <div style="border-left: 2px solid var(--ink-20); padding-left: 32px; font-family: var(--body); color: var(--ink);">
+
+      <p style="margin: 0; font-size: 18px; line-height: 1.85;">向用户发送面向人的文字时，你是在给一个人写作，而不是在往控制台打日志。假设用户看不到你大部分的工具调用或思考 —— 他们只能看到你输出的文字。</p>
+
+      <p class="fragment f" data-fragment-index="1" style="margin: 18px 0; color: var(--ink-20); font-size: 18px; letter-spacing: 0.5em;">⋯⋯</p>
+
+      <p class="fragment f" data-fragment-index="1" style="margin: 0; font-size: 18px; line-height: 1.85;">留意用户的专业级别的线索；显得像专家就稍微收一点，像是新人就多解释。</p>
+
+      <p class="fragment f" data-fragment-index="2" style="margin: 18px 0; color: var(--ink-20); font-size: 18px; letter-spacing: 0.5em;">⋯⋯</p>
+
+      <p class="fragment f" data-fragment-index="2" style="margin: 0; font-size: 18px; line-height: 1.85;">最重要的是让读者无认知负担、无需追问就理解你的输出，而不是你有多简短。如果用户得重读总结或要你解释，那比第一遍多读几行更费时间。</p>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 表达 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: block;">
+  <div style="text-align: center;">
+
+    <h1 class="hero" style="font-size: 130px; letter-spacing: -0.05em;">表达</h1>
+
+    <div class="s48"></div>
+
+    <div style="display: flex; align-items: baseline; justify-content: center; gap: 22px; font-family: var(--display); font-weight: 700; letter-spacing: -0.025em;">
+      <span class="fragment f" data-fragment-index="0" style="font-size: 30px; color: var(--ink);">好的<span class="hl-b c-b">上下文</span>技巧</span>
+      <span class="fragment f" data-fragment-index="1" style="font-size: 36px; color: var(--orange); font-weight: 800;">=</span>
+      <span class="fragment f" data-fragment-index="2" style="font-size: 30px; color: var(--ink);">好的<span class="hl-o c-o">表达</span>技巧</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 好的表达者 ===== -->
+<section class="center-slide" style="padding: 40px 80px; display: block;" data-fragment="3">
+  <div style="width: 100%; max-width: 1100px;">
+
+    <div style="text-align: center;">
+      <h2 class="title" style="font-size: 36px; text-align: center;">好的<span class="c-o">表达者</span></h2>
+    </div>
+    <div class="s28"></div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+
+      <div class="fragment f visible" data-fragment-index="0" style="background: var(--card); border: 1px solid var(--ink-10); border-radius: 14px; padding: 20px 24px; box-shadow: var(--sh-md);">
+        <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px;">
+          <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--orange); letter-spacing: 0.05em;">01</span>
+          <span style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">知道自己在跟谁说话</span>
+        </div>
+        <div style="height: 1px; background: var(--ink-10); margin-bottom: 12px;"></div>
+        <p style="font-family: var(--body); font-size: 14px; line-height: 1.65; color: var(--ink-70); font-style: italic;">"你先不急实际产出报告，先和我讨论下此方案"</p>
+        <p style="font-family: var(--body); font-size: 16px; line-height: 1.5; color: var(--ink); font-weight: 500; margin-top: 14px;">知道 AI 拿到任务就开始干、不会主动问</p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="1" style="background: var(--card); border: 1px solid var(--ink-10); border-radius: 14px; padding: 20px 24px; box-shadow: var(--sh-md);">
+        <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px;">
+          <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--orange); letter-spacing: 0.05em;">02</span>
+          <span style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">不让对方猜</span>
+        </div>
+        <div style="height: 1px; background: var(--ink-10); margin-bottom: 12px;"></div>
+        <p style="font-family: var(--body); font-size: 14px; line-height: 1.65; color: var(--ink-70); font-style: italic;">"遇到了一个 bug，需要你帮我查下原因。赛季手册有个任务，完成 5 次狂想曲，是配置在 achievement 表的，id=25091499，但实际 QA 测试时发现，玩了狂想曲之后这个任务进度并没有改变。狂想曲是 S14 赛季玩法的一种特殊主题事件，后端事件名是 s14_complete_theme，请帮我看看问题出在哪，是不是这个事件的问题"</p>
+        <p style="font-family: var(--body); font-size: 16px; line-height: 1.5; color: var(--ink); font-weight: 500; margin-top: 14px;">你提供的信息越具体，AI 就能越好地提供帮助</p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="2" style="background: var(--card); border: 1px solid var(--ink-10); border-radius: 14px; padding: 20px 24px; box-shadow: var(--sh-md);">
+        <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px;">
+          <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--orange); letter-spacing: 0.05em;">03</span>
+          <span style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">用具体画面代替抽象形容</span>
+        </div>
+        <div style="height: 1px; background: var(--ink-10); margin-bottom: 12px;"></div>
+        <p style="font-family: var(--body); font-size: 14px; line-height: 1.65; color: var(--ink-70); font-style: italic;">"整理一份表格。<span style="color: var(--rose); font-weight: 600; font-style: normal;">举例</span>：behavior 374：用于一次性施加 buff 或持续施加 buff，在该词缀退出后会把其施加的尚存的 buff 移除"</p>
+        <p style="font-family: var(--body); font-size: 16px; line-height: 1.5; color: var(--ink); font-weight: 500; margin-top: 14px;">"详细""完整"这种词没人能对齐——直接给一行样例</p>
+      </div>
+
+      <div class="fragment f visible current-fragment" data-fragment-index="3" style="background: var(--card); border: 1px solid var(--ink-10); border-radius: 14px; padding: 20px 24px; box-shadow: var(--sh-md);">
+        <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px;">
+          <span style="font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--orange); letter-spacing: 0.05em;">04</span>
+          <span style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">区分"必须"和"最好"</span>
+        </div>
+        <div style="height: 1px; background: var(--ink-10); margin-bottom: 12px;"></div>
+        <p style="font-family: var(--body); font-size: 14px; line-height: 1.65; color: var(--ink-70); font-style: italic;">"请直接返回真实查询结果，<span style="color: var(--rose); font-weight: 600; font-style: normal;">不要</span>只给方法说明。<br><span style="color: var(--rose); font-weight: 600; font-style: normal;">重点关注</span> SSR 掉落宠及各卡池表现"</p>
+        <p style="font-family: var(--body); font-size: 16px; line-height: 1.5; color: var(--ink); font-weight: 500; margin-top: 14px;">说明 AI 该跳过什么、该聚焦什么——它就不会把篇幅浪费在你不在意的地方</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 第五条：好的表达者也是好的倾听者 ===== -->
+<section class="center-slide" style="padding: 40px 80px; display: block;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 920px;">
+
+    <div style="text-align: center;">
+      
+      <h1 class="hero" style="font-size: 54px; line-height: 1.2;">好的表达者，也是好的<span class="c-b">倾听者</span></h1>
+      <p style="font-size: 21px; color: var(--ink-70); margin-top: 18px; line-height: 1.5;"><font color="#d98a4a"></font></p>
+    </div>
+
+    <div class="s36"></div>
+
+    
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+
+      <div class="callout fragment f visible" data-fragment-index="0" style="padding: 12px 0 12px 22px;">
+        <p style="font-size: 18px; color: var(--ink); font-weight: 600; line-height: 1.4;">把自己放到 AI 的第一视角</p>
+        <p style="font-size: 14.5px; color: var(--ink-70); margin-top: 5px; line-height: 1.55;">看看它的上下文窗口里面到底有什么，完成当前任务的信息充足吗？有没有误导信息？</p>
+      </div>
+
+      <div class="callout fragment f visible" data-fragment-index="1" style="padding: 12px 0 12px 22px;">
+        <p style="font-size: 18px; color: var(--ink); font-weight: 600; line-height: 1.4;">让它把 “解题步骤” 说出来</p>
+        <p style="font-size: 14.5px; color: var(--ink-70); margin-top: 5px; line-height: 1.55;">“你为什么会这样想？”“你是怎么得出这个结论的，一步步写给我看。”</p>
+      </div>
+
+      <div class="callout fragment f visible" data-fragment-index="2" style="padding: 12px 0 12px 22px;">
+        <p style="font-size: 18px; color: var(--ink); font-weight: 600; line-height: 1.4;">时刻关注它的 “精神状态”</p>
+        <p style="font-size: 14.5px; color: var(--ink-70); margin-top: 5px; line-height: 1.55;">它跟得上我吗？它如果理解错了，立刻打断它：“你搞错了，我的意思是XXX。”</p>
+      </div>
+
+      <div class="callout fragment f visible current-fragment" data-fragment-index="3" style="padding: 12px 0 12px 22px;">
+        <p style="font-size: 18px; color: var(--ink); font-weight: 600; line-height: 1.4;">接纳它的 “局限性”</p>
+        <p style="font-size: 14.5px; color: var(--ink-70); margin-top: 5px; line-height: 1.55;">一次性完成不了那么多任务？那就先让它只做一小步。</p>
+      </div>
+
+    </div>
+
+    <div class="fragment f" data-fragment-index="4" style="text-align: center; margin-top: 32px;">
+      
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 章节过渡：如何管理上下文 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center;">
+    <h1 class="hero fragment f" data-fragment-index="0" style="font-size: 80px;">
+      如何<span class="c-b">管理</span>上下文<span class="c-b" style="font-weight: 300;">？</span>
+    </h1>
+    <p class="fragment f" data-fragment-index="1" style="font-size: 34px; color: var(--ink-70); margin-top: 36px; line-height: 1.4; letter-spacing: 0.02em; font-weight: 500;">
+      上下文工程 —— <span style="color: var(--orange); font-weight: 700;">复利</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ===== 上下文工程 · 系统总览（单页合并）              ===== -->
+<!-- ============================================================ -->
+
+<!-- ===== Claude Code 的上下文系统 · 四种机制 ===== -->
+<section class="center-slide" style="padding: 44px 80px;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 1020px;">
+
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h2 class="title" style="font-size: 38px;">Claude Code 的<span class="c-b">上下文系统</span></h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+
+      <div class="fragment f visible" data-fragment-index="0" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--blue); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 28px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--blue); font-weight: 700; letter-spacing: -0.01em;">CLAUDE.md</div>
+        <p style="font-size: 17px; color: var(--ink); line-height: 1.55; margin: 0;">
+          <span style="color: var(--blue); font-weight: 700;">每次启动都注入</span> —— 放永远要遵守的规则、项目共识。
+        </p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="1" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--blue); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 28px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--blue); font-weight: 700; letter-spacing: -0.01em;">Skill</div>
+        <p style="font-size: 17px; color: var(--ink); line-height: 1.55; margin: 0;">
+          <span style="color: var(--blue); font-weight: 700;">渐进式加载</span> —— 启动只塞一行描述，AI 判断要用时再把全文拖进来。
+        </p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="2" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--orange); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 28px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--orange); font-weight: 700; letter-spacing: -0.01em;">Rules</div>
+        <p style="font-size: 17px; color: var(--ink); line-height: 1.55; margin: 0;">
+          <span style="color: var(--orange); font-weight: 700;">按路径匹配</span> —— 改到哪个目录、对应的那条规则才被注入，其他时候零开销。
+        </p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="3" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--orange); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 28px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--orange); font-weight: 700; letter-spacing: -0.01em;">Commands</div>
+        <p style="font-size: 17px; color: var(--ink); line-height: 1.55; margin: 0;">
+          <span style="color: var(--orange); font-weight: 700;">用户手动触发</span> —— 一条 <span style="font-family: var(--mono); color: var(--orange); font-weight: 600;">/cmd</span> 把你写好的整套提示词一次性丢进上下文。
+        </p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="4" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--rose); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 28px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--rose); font-weight: 700; letter-spacing: -0.01em;">Hooks</div>
+        <p style="font-size: 17px; color: var(--ink); line-height: 1.55; margin: 0;">
+          <span style="color: var(--rose); font-weight: 700;">工作流节点自动触发</span> —— 在用户提交、工具调用等时刻自动跑脚本，注入提示或拦截行为。
+        </p>
+      </div>
+
+      <div class="fragment f visible current-fragment" data-fragment-index="5" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--rose); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 28px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--rose); font-weight: 700; letter-spacing: -0.01em;">Sub-agents</div>
+        <p style="font-size: 17px; color: var(--ink); line-height: 1.55; margin: 0;">
+          <span style="color: var(--rose); font-weight: 700;">派出上下文干净的子 AI</span> —— 任务做完只传结论，过程中的杂讯都留在子上下文里。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 上下文工程的四个原则（原 28+29 合并） ===== -->
+<section class="center-slide" style="padding: 44px 80px;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 980px;">
+
+    <div style="text-align: center; margin-bottom: 30px;">
+      
+      <h2 class="title" style="font-size: 36px;">上下文工程的<span class="c-b">四个原则</span></h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+
+      <div class="fragment f visible" data-fragment-index="0" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--blue); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 56px 1fr; align-items: baseline; gap: 22px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--blue); font-weight: 700; letter-spacing: -0.02em;">01</div>
+        <div>
+          <p style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin: 0 0 6px 0;">多积累、多积累、多积累</p>
+          <p style="font-size: 15.5px; color: var(--ink-70); line-height: 1.6; margin: 0;">把验证过的好表达固化下来，让它下次自动出现在 AI 的视野里。<span style="font-family: var(--mono); color: var(--blue); font-weight: 600; margin-left: 6px;">（CLAUDE.md、Skill、Commands）</span></p>
+        </div>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="1" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--orange); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 56px 1fr; align-items: baseline; gap: 22px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--orange); font-weight: 700; letter-spacing: -0.02em;">02</div>
+        <div>
+          <p style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin: 0 0 6px 0;">对的信息在对的时候出现</p>
+          <p style="font-size: 15.5px; color: var(--ink-70); line-height: 1.6; margin: 0;">上下文的加载方式，取决于 Agent 什么时候会用到这个信息。<span style="font-family: var(--mono); color: var(--orange); font-weight: 600; margin-left: 6px;">（Rules、Hook）</span></p>
+        </div>
+      </div>
+
+      <div class="fragment f visible current-fragment" data-fragment-index="2" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--rose); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 56px 1fr; align-items: baseline; gap: 22px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--rose); font-weight: 700; letter-spacing: -0.02em;">03</div>
+        <div>
+          <p style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin: 0 0 6px 0;">过时的上下文比没有更危险</p>
+          <p style="font-size: 15.5px; color: var(--ink-70); line-height: 1.6; margin: 0;">上下文对于 AI 来说就是绝对真理，不要放容易过期的内容、<span style="color: var(--rose); font-weight: 600;">该删就删</span>。</p>
+        </div>
+      </div>
+
+      <div class="fragment f" data-fragment-index="3" style="background: var(--card); border: 1px solid var(--ink-10); border-left: 4px solid var(--green); border-radius: 12px; padding: 18px 28px; box-shadow: var(--sh-sm); display: grid; grid-template-columns: 56px 1fr; align-items: baseline; gap: 22px;">
+        <div style="font-family: var(--mono); font-size: 22px; color: var(--green); font-weight: 700; letter-spacing: -0.02em;">04</div>
+        <div>
+          <p style="font-family: var(--display); font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; margin: 0 0 6px 0;">必要的时候提供全新视角</p>
+          <p style="font-size: 15.5px; color: var(--ink-70); line-height: 1.6; margin: 0;">上下文中的内容是价值也是负担，看看 Agents 什么时候没有前文会工作得更好。<span style="font-family: var(--mono); color: var(--green); font-weight: 600; margin-left: 6px;">（Sub-agents、新会话）</span></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 软控制 vs 硬控制 ===== -->
+<section class="center-slide" style="padding: 44px 80px;" hidden="" aria-hidden="true">
+  <div style="width: 100%; max-width: 1080px;">
+
+    <div style="text-align: center; margin-bottom: 28px;">
+      
+      <h2 class="title" style="font-size: 36px;">上下文都是<span class="c-b">软控制</span></h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+
+      <div class="fragment f visible" data-fragment-index="0">
+        <p style="font-family: var(--mono); font-size: 11px; color: var(--ink-40); letter-spacing: 0.1em; margin-bottom: 14px; text-align: center;">提示词</p>
+        <div style="border: 1.5px dashed var(--ink-20); border-radius: 12px; padding: 22px 26px; background: rgba(43,45,46,0.02); min-height: 180px;">
+          <p style="font-family: var(--mono); font-size: 12px; color: var(--ink-40); letter-spacing: 0.06em; margin-bottom: 10px;">CLAUDE.md · Skill · Rules · Commands</p>
+          <div style="height: 1px; background: var(--ink-10); margin: 12px 0;"></div>
+          <p style="font-family: var(--body); font-size: 15px; color: var(--ink-70); line-height: 1.9; font-style: italic;">“不要跳过 pre-commit hook”<br>“编辑前先读文件”<br>“不要提交 .env”</p>
+        </div>
+        <p style="text-align: center; margin-top: 16px; font-family: var(--display); font-size: 24px; font-weight: 700; color: var(--ink-40); letter-spacing: -0.02em;">建议</p>
+      </div>
+
+      <div class="fragment f visible" data-fragment-index="1">
+        <p style="font-family: var(--mono); font-size: 11px; color: var(--blue); letter-spacing: 0.1em; margin-bottom: 14px; text-align: center; font-weight: 600;">代码</p>
+        <div style="border: 1.5px solid var(--blue); border-radius: 12px; padding: 22px 26px; background: rgba(74,127,196,0.04); box-shadow: var(--sh-sm); min-height: 180px;">
+          <p style="font-family: var(--mono); font-size: 12px; color: var(--blue); letter-spacing: 0.06em; margin-bottom: 10px; font-weight: 600;">Hooks · settings.json · 工具权限</p>
+          <div style="height: 1px; background: var(--ink-10); margin: 12px 0;"></div>
+          <p style="font-family: var(--body); font-size: 15px; color: var(--ink); line-height: 1.9;">PreToolUse Hook → deny<br>Edit 工具 → 必须先 Read<br>permissions.deny: ["Bash(git commit:*)"]</p>
+        </div>
+        <p style="text-align: center; margin-top: 16px; font-family: var(--display); font-size: 24px; font-weight: 700; color: var(--blue); letter-spacing: -0.02em;">法律</p>
+      </div>
+
+    </div>
+
+    <div class="fragment f visible current-fragment" data-fragment-index="2" style="margin-top: 32px; text-align: center;">
+      <p style="font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; line-height: 1.4;">明确的规则、绝不能出错的事 <span style="color: var(--orange);">→</span> 写成<span class="c-b">代码</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 实践 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+    <h1 class="hero" style="font-size: 72px;">实践</h1>
+    <div class="s28"></div>
+    <p class="fragment f" data-fragment-index="0" style="font-size: 22px; color: var(--ink); font-weight: 600; line-height: 1.7; text-align: center; margin: 0;">
+      去用，去用，去用
+    </p>
+  </div>
+</section>
+
+<!-- ===== 开放心态 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+    <h1 class="hero" style="font-size: 72px;">开放心态</h1>
+    <div class="s28"></div>
+    <p class="fragment f" data-fragment-index="0" style="font-size: 22px; color: var(--ink-70); line-height: 1.7; text-align: center; margin: 0;">
+      今天 AI 做不了的事，明天可能就能了<br>
+      <span style="color: var(--ink); font-weight: 600;">—— 或者给它更好的上下文就能了</span>
+    </p>
+  </div>
+</section>
+
+<!-- ===== 判断力 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+    <h1 class="hero" style="font-size: 72px;">判断力</h1>
+    <div class="s28"></div>
+    <p class="fragment f" data-fragment-index="0" style="font-size: 22px; color: var(--ink-70); line-height: 1.7; text-align: center; margin: 0;">
+      在“好”的标准不是唯一收敛的领域，<br>
+      <span style="color: var(--ink); font-weight: 600;">永远需要你来定义什么是“好”</span>
+    </p>
+  </div>
+</section>
+
+<!-- ===== 结束页 ===== -->
+<section class="center-slide" hidden="" aria-hidden="true" style="display: none;">
+  <p style="font-family: var(--display); font-size: 140px; font-weight: 800; color: var(--ink); letter-spacing: -0.04em;">Q &amp; A</p>
+</section>
+
+</div>
+</div>
+
+<script src="lib/reveal.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  width: 1280, height: 720, margin: 0,
+  transition: 'fade', transitionSpeed: 'slow', backgroundTransition: 'none',
+  center: false, controls: true, controlsTutorial: false,
+  progress: true, navigationMode: 'linear',
+  slideNumber: false,  // 关掉 reveal 自带页码，改用下方自渲染的 #page-indicator，避免 fade 切片时新旧数字重影
+});
+</script>
+
+<!-- ========== 浏览器内编辑功能 ========== -->
+<style>
+.edit-toolbar {
+  position: fixed !important;
+  top: 14px !important;
+  left: 14px !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  gap: 8px !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  pointer-events: auto !important;
+}
+#page-indicator {
+  position: fixed;
+  top: 22px;
+  right: 28px;
+  z-index: 9998;
+  font-family: 'Outfit', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #2B2D2E;
+  letter-spacing: -0.01em;
+  background: rgba(250,247,242,0.85);
+  padding: 2px 10px;
+  border-radius: 6px;
+  pointer-events: none;
+  user-select: none;
+}
+.edit-btn {
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(43,45,46,0.18);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2B2D2E;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.edit-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.edit-btn.active { background: #4A7FC4; color: #fff; border-color: #4A7FC4; }
+.edit-btn.save { background: #D98A4A; color: #fff; border-color: #D98A4A; }
+.edit-btn.save:hover { background: #c87a3a; }
+.edit-btn.danger { background: #fff; color: #C95F6D; border-color: rgba(201,95,109,0.4); }
+[data-editable="true"] {
+  outline: 1.5px dashed rgba(74,127,196,0.55);
+  outline-offset: 3px;
+  background: rgba(74,127,196,0.04);
+  border-radius: 3px;
+  cursor: text;
+}
+[data-editable="true"]:focus {
+  outline-color: rgba(74,127,196,0.9);
+  outline-style: solid;
+  background: rgba(74,127,196,0.08);
+}
+.edit-toast {
+  position: fixed;
+  top: 56px;
+  left: 14px;
+  z-index: 10000;
+  background: rgba(43,45,46,0.92);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: 'Inter', system-ui, sans-serif;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+.edit-toast.show { opacity: 1; transform: translateY(0); }
+#edit-del-btn {
+  position: fixed;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #C95F6D;
+  background: #fff;
+  color: #C95F6D;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  padding: 0;
+  cursor: pointer;
+  display: none;
+  z-index: 10001;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-family: 'Inter', system-ui, sans-serif;
+  user-select: none;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease;
+}
+#edit-del-btn:hover {
+  background: #C95F6D;
+  color: #fff;
+  transform: scale(1.1);
+}
+#edit-del-btn.show { display: block; }
+</style>
+
+<div class="edit-toolbar">
+  <button class="edit-btn" id="btn-edit" title="开始编辑（E 键开始/完成；Ctrl+S 强制重存）">✎ 编辑此页</button>
+  <button class="edit-btn danger" id="btn-reset" title="清掉本浏览器对所有页面的本地编辑">↺ 重置</button>
+</div>
+<div id="page-indicator">1 / 1</div>
+<div class="edit-toast" id="edit-toast"></div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'ppt-edits-part1-v1';
+  const TEXT_TAGS = ['H1','H2','H3','H4','P','SPAN','LI','TD','TH','DIV'];
+
+  let editing = false;
+  let editTarget = null;
+  let fileHandle = null;
+  let delBtn = null;
+  let hoverTarget = null;
+  let hoverHideTimer = null;
+
+  function $(id) { return document.getElementById(id); }
+
+  // ── IndexedDB：跨刷新持久化 FileSystemFileHandle ──
+  function idbOpen() {
+    return new Promise((resolve, reject) => {
+      const r = indexedDB.open('ppt-editor-db', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('handles');
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+  async function idbSet(key, val) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('handles', 'readwrite');
+      tx.objectStore('handles').put(val, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+  async function idbGet(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('handles', 'readonly');
+      const r = tx.objectStore('handles').get(key);
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+  async function idbDel(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('handles', 'readwrite');
+      tx.objectStore('handles').delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  function getAllSlides() {
+    return Array.from(document.querySelectorAll('.reveal .slides > section'));
+  }
+
+  function getCurrentSlide() {
+    return document.querySelector('.reveal .slides section.present')
+        || document.querySelector('.reveal .slides section');
+  }
+
+  function loadEdits() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch(e) { return {}; }
+  }
+
+  function saveEdits(edits) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+  }
+
+  function toast(msg, ms) {
+    const t = $('edit-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._tm);
+    t._tm = setTimeout(() => t.classList.remove('show'), ms || 1800);
+  }
+
+  // 只把"含直接文本节点"的元素设为可编辑，避免父级 div 编辑误删结构
+  function makeEditable(slide) {
+    slide.querySelectorAll(TEXT_TAGS.join(',')).forEach(el => {
+      const hasDirectText = Array.from(el.childNodes).some(n =>
+        n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0
+      );
+      if (hasDirectText) {
+        el.contentEditable = 'true';
+        el.dataset.editable = 'true';
+        el.addEventListener('mouseenter', onEditableEnter);
+        el.addEventListener('mouseleave', onEditableLeave);
+      }
+    });
+  }
+
+  function clearEditable(slide) {
+    hideDelBtn();
+    slide.querySelectorAll('[data-editable]').forEach(el => {
+      el.removeAttribute('contenteditable');
+      delete el.dataset.editable;
+      el.removeEventListener('mouseenter', onEditableEnter);
+      el.removeEventListener('mouseleave', onEditableLeave);
+    });
+  }
+
+  // ── 删除文本框：悬浮 × 按钮 ──
+  function ensureDelBtn() {
+    if (delBtn) return delBtn;
+    delBtn = document.createElement('button');
+    delBtn.id = 'edit-del-btn';
+    delBtn.type = 'button';
+    delBtn.textContent = '×';
+    delBtn.title = '删除此文本框（按"完成并保存"后写入磁盘）';
+    delBtn.addEventListener('mouseenter', () => clearTimeout(hoverHideTimer));
+    delBtn.addEventListener('mouseleave', scheduleHideDelBtn);
+    delBtn.addEventListener('mousedown', (e) => e.preventDefault()); // 别抢 contenteditable 焦点
+    delBtn.addEventListener('click', onDelClick);
+    document.body.appendChild(delBtn);
+    return delBtn;
+  }
+
+  function showDelBtnFor(el) {
+    ensureDelBtn();
+    hoverTarget = el;
+    const r = el.getBoundingClientRect();
+    // 放在元素右上角，半内半外
+    delBtn.style.left = Math.round(r.right - 11) + 'px';
+    delBtn.style.top = Math.round(r.top - 11) + 'px';
+    delBtn.classList.add('show');
+  }
+
+  function hideDelBtn() {
+    if (delBtn) delBtn.classList.remove('show');
+    hoverTarget = null;
+  }
+
+  function scheduleHideDelBtn() {
+    clearTimeout(hoverHideTimer);
+    hoverHideTimer = setTimeout(hideDelBtn, 180);
+  }
+
+  function onEditableEnter(e) {
+    if (!editing) return;
+    clearTimeout(hoverHideTimer);
+    showDelBtnFor(e.currentTarget);
+  }
+
+  function onEditableLeave() {
+    scheduleHideDelBtn();
+  }
+
+  function onDelClick() {
+    if (!hoverTarget || !editing) return;
+    const target = hoverTarget;
+    const preview = (target.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 30);
+    const tail = (target.textContent || '').trim().length > 30 ? '…' : '';
+    if (!confirm('删除这个文本框？\n\n"' + preview + tail + '"\n\n（按"完成并保存"后才会写入 part1.html）')) return;
+    hideDelBtn();
+    target.remove();
+    toast('已删除，按"完成并保存"写入磁盘', 2400);
+  }
+
+  function enterEdit() {
+    const slide = getCurrentSlide();
+    if (!slide) return;
+    editTarget = slide;
+    makeEditable(slide);
+    editing = true;
+    $('btn-edit').textContent = '💾 完成并保存';
+    $('btn-edit').classList.add('active');
+    toast('点文字编辑、悬停时点右上角 × 删除整块；按"完成并保存"写入 part1.html', 2800);
+  }
+
+  // 仅 stage 编辑到 localStorage（不写文件），不切 UI 状态
+  function stageEdit() {
+    if (!editTarget) return false;
+    clearEditable(editTarget);
+    const idx = getAllSlides().indexOf(editTarget);
+    if (idx < 0) return false;
+    const edits = loadEdits();
+    edits[idx] = editTarget.innerHTML;
+    saveEdits(edits);
+    return true;
+  }
+
+  // 完成编辑：暂存 → 立刻写磁盘
+  async function exitEdit() {
+    if (!editTarget) return;
+    const ok = stageEdit();
+    editTarget = null;
+    editing = false;
+    $('btn-edit').textContent = '✎ 编辑此页';
+    $('btn-edit').classList.remove('active');
+    if (ok) {
+      // 立刻自动写到磁盘
+      await saveToFile();
+    }
+  }
+
+  function applyStoredEdits() {
+    const edits = loadEdits();
+    const slides = getAllSlides();
+    let count = 0;
+    Object.entries(edits).forEach(([k, html]) => {
+      const idx = parseInt(k);
+      if (slides[idx] && typeof html === 'string') {
+        slides[idx].innerHTML = html;
+        count++;
+      }
+    });
+    return count;
+  }
+
+  // 从原文件文本里把所有 section 的 innerHTML 替换成 localStorage 里的编辑版本
+  // 关键：不动当前 document（含 reveal 注入的运行时 DOM），只动磁盘上的源文本
+  function applyEditsToSourceText(sourceHtml) {
+    const edits = loadEdits();
+    if (Object.keys(edits).length === 0) return sourceHtml;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(sourceHtml, 'text/html');
+    const sections = doc.querySelectorAll('.reveal .slides > section');
+    Object.entries(edits).forEach(([k, html]) => {
+      const idx = parseInt(k);
+      if (sections[idx] && typeof html === 'string') {
+        sections[idx].innerHTML = html;
+      }
+    });
+    // 重置动态页码 div 的占位文本（如果原文件里有）
+    const pi = doc.querySelector('#page-indicator');
+    if (pi) pi.textContent = '1 / 1';
+    return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+  }
+
+  // 取已存的 handle 并申请权限（必须在用户手势事件里调用）
+  async function getOrPickHandle() {
+    if (fileHandle) {
+      const ok = await ensurePermission(fileHandle);
+      if (ok) return fileHandle;
+    }
+    try {
+      const stored = await idbGet('part1-handle');
+      if (stored) {
+        const ok = await ensurePermission(stored);
+        if (ok) {
+          fileHandle = stored;
+          return fileHandle;
+        }
+      }
+    } catch(e) {}
+    // 用 showOpenFilePicker：强制选已存在的文件，杜绝"创建空新文件"
+    if (!('showOpenFilePicker' in window)) {
+      throw new Error('当前浏览器不支持 File System Access API，请用 Chrome / Edge');
+    }
+    const [picked] = await window.showOpenFilePicker({
+      types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }],
+      multiple: false,
+    });
+    const ok = await ensurePermission(picked);
+    if (!ok) throw new Error('未授予写入权限');
+    fileHandle = picked;
+    try { await idbSet('part1-handle', picked); } catch(e) {}
+    return fileHandle;
+  }
+
+  // 列出所有 backup-* keys（按时间倒序）
+  async function listBackups() {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('handles', 'readonly');
+      const req = tx.objectStore('handles').getAllKeys();
+      req.onsuccess = () => {
+        const keys = (req.result || []).filter(k => typeof k === 'string' && k.indexOf('backup-') === 0);
+        keys.sort().reverse();
+        resolve(keys);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  // 只保留最近 5 份备份
+  async function pruneBackups() {
+    const keys = await listBackups();
+    const toDelete = keys.slice(5);
+    for (const k of toDelete) {
+      try { await idbDel(k); } catch(_) {}
+    }
+  }
+
+  // 控制台暴露：window.PPTBackup.list() / .restore(key) / .download(key)
+  window.PPTBackup = {
+    list: async () => {
+      const keys = await listBackups();
+      console.log('备份列表（最新在前）：');
+      keys.forEach(k => {
+        const ts = parseInt(k.split('-')[1]);
+        console.log('  ', k, '→', new Date(ts).toLocaleString());
+      });
+      return keys;
+    },
+    download: async (key) => {
+      const html = await idbGet(key);
+      if (!html) { console.error('备份不存在'); return; }
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = key + '.html'; a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  async function ensurePermission(handle) {
+    if (!handle.queryPermission || !handle.requestPermission) return true;
+    const opts = { mode: 'readwrite' };
+    if ((await handle.queryPermission(opts)) === 'granted') return true;
+    if ((await handle.requestPermission(opts)) === 'granted') return true;
+    return false;
+  }
+
+  async function saveToFile() {
+    if (editing) exitEdit();
+
+    if (!('showOpenFilePicker' in window)) {
+      // Firefox/Safari 没有 File System Access API：兜底走下载（用当前 document）
+      downloadHtml('<!DOCTYPE html>\n' + document.documentElement.outerHTML);
+      return;
+    }
+
+    let handle;
+    try {
+      handle = await getOrPickHandle();
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      toast('选文件失败：' + (e.message || e.name), 3000);
+      return;
+    }
+
+    try {
+      // 1. 读磁盘源文本
+      const file = await handle.getFile();
+      const sourceHtml = await file.text();
+
+      // 2. 第一道防御：选错文件 → 拒绝
+      if (sourceHtml.length < 5000 || sourceHtml.indexOf('class="reveal"') < 0) {
+        fileHandle = null;
+        try { await idbDel('part1-handle'); } catch(_) {}
+        toast('选错文件：内容过短或不是这份 PPT，已忘记此文件，请按"重置"后重新选 part1.html', 5000);
+        return;
+      }
+
+      // 3. 自动备份当前磁盘版本到 IndexedDB（万一新版写错可恢复）
+      try {
+        await idbSet('backup-' + Date.now(), sourceHtml);
+        await pruneBackups();
+      } catch(e) { /* 备份失败不影响主流程 */ }
+
+      // 4. 应用编辑
+      const out = applyEditsToSourceText(sourceHtml);
+
+      // 5. 第二道防御：输出本身有效
+      if (!out || out.length < 5000 || out.indexOf('class="reveal"') < 0) {
+        toast('内部错误：处理后文本无效，已中断写入', 4500);
+        return;
+      }
+
+      // 6. 第三道防御：输出不能比源文本短超过 30%（防止结构性丢失）
+      if (out.length < sourceHtml.length * 0.7) {
+        const lossPct = Math.round((1 - out.length / sourceHtml.length) * 100);
+        toast('已中断：输出比原文短了 ' + lossPct + '%（' + Math.round(out.length/1024) + 'KB vs ' + Math.round(sourceHtml.length/1024) + 'KB）', 6000);
+        return;
+      }
+
+      // 7. 写磁盘
+      const writable = await handle.createWritable();
+      await writable.write(out);
+      await writable.close();
+
+      // 8. 保存成功 → 清 localStorage（已合并到磁盘）
+      localStorage.removeItem(STORAGE_KEY);
+      toast('已写入 ' + handle.name + ' (' + Math.round(out.length / 1024) + ' KB)', 2400);
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      toast('写入失败：' + (e.message || e.name) + '（本地编辑保留在浏览器，可重试）', 4500);
+    }
+  }
+
+  function downloadHtml(html) {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'part1.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('已下载 part1.html', 1800);
+  }
+
+  async function resetAll() {
+    if (!confirm('确定要清掉本浏览器里对所有页面的编辑？\n（只影响 localStorage，不会动磁盘上的 part1.html）\n\n同时会忘记已记住的"保存目标文件"。')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    fileHandle = null;
+    try { await idbDel('part1-handle'); } catch(_) {}
+    toast('已清空，刷新页面后恢复原版', 2200);
+  }
+
+  function updatePageIndicator() {
+    const ind = $('page-indicator');
+    if (!ind) return;
+    const slides = getAllSlides();
+    const current = getCurrentSlide();
+    const idx = current ? (slides.indexOf(current) + 1) : 1;
+    ind.textContent = idx + ' / ' + slides.length;
+  }
+
+  function init() {
+    const n = applyStoredEdits();
+    if (n > 0) toast('已应用本地编辑（' + n + ' 页）', 1500);
+
+    // reveal 已经初始化完了，sync 一下让它知道结构变化
+    if (window.Reveal && Reveal.sync) Reveal.sync();
+
+    updatePageIndicator();
+    if (window.Reveal && Reveal.on) {
+      Reveal.on('slidechanged', updatePageIndicator);
+      Reveal.on('ready', updatePageIndicator);
+    }
+
+    $('btn-edit').addEventListener('click', () => editing ? exitEdit() : enterEdit());
+    $('btn-reset').addEventListener('click', resetAll);
+
+    // 快捷键：E = 编辑/完成；Ctrl/Cmd+S = 保存到文件
+    document.addEventListener('keydown', (e) => {
+      if (e.target.isContentEditable) return; // 编辑中的输入不拦
+      if ((e.key === 'e' || e.key === 'E') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        editing ? exitEdit() : enterEdit();
+      }
+      if ((e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        saveToFile();
+      }
+    });
+  }
+
+  // reveal 是同步初始化的，但为保险用 ready 事件
+  if (window.Reveal && Reveal.isReady && Reveal.isReady()) {
+    init();
+  } else if (window.Reveal) {
+    Reveal.on('ready', init);
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
+  }
+})();
+</script>
+
+
+
+</body></html>
