@@ -974,7 +974,7 @@
 <!-- ===== LLM 的底层缺陷 ===== -->
 <section class="center-slide" style="padding: 32px 60px; display: none;" hidden="" aria-hidden="true">
   <div style="text-align: center; width: 100%;">
-    <div class="fragment f" data-fragment-index="0">
+    <div class="fragment f visible" data-fragment-index="0">
       <h2 class="title" style="font-size: 40px; text-align: center;">LLM 的出厂设置</h2>
     </div>
     <div class="s20"></div>
@@ -983,21 +983,21 @@
     <div style="display: flex; gap: 18px; width: 100%; max-width: 1140px; margin: 0 auto; align-items: stretch;">
 
       <!-- 缺陷 1：没有记忆 -->
-      <div class="defect-card fragment f" data-fragment-index="1">
+      <div class="defect-card fragment f visible" data-fragment-index="1">
         <div class="defect-title">没有记忆</div>
         <div class="defect-why">模型只能看到当前窗口里的 token，窗口之外的对它来说就是不存在</div>
         <div class="defect-action">想让它知道什么，就主动放进上下文</div>
       </div>
 
       <!-- 缺陷 2：看得越多，看得越浅 -->
-      <div class="defect-card fragment f" data-fragment-index="2">
+      <div class="defect-card fragment f visible" data-fragment-index="2">
         <div class="defect-title">看得越多，看得越浅</div>
         <div class="defect-why">自注意力是零和的——上下文越长，每个 token 分到的注意力越少，关键信息容易被淹没</div>
         <div class="defect-action">控制上下文长度；任务大就拆成上下文无关的子任务</div>
       </div>
 
       <!-- 缺陷 3：被自己的上下文带偏 -->
-      <div class="defect-card fragment f" data-fragment-index="3">
+      <div class="defect-card fragment f visible" data-fragment-index="3">
         <div class="defect-title">被自己的上下文带偏</div>
         <div class="defect-why">预训练就是「看前文，写下一个词」，走上错误方向后很难自己掉头</div>
         <div class="defect-action">发现走偏及时介入；必要时开新对话重来</div>
@@ -1011,16 +1011,16 @@
     <div style="display: flex; gap: 18px; width: 100%; max-width: 1140px; margin: 0 auto; justify-content: center; align-items: stretch;">
 
       <!-- 缺陷 4：看起来很有道理（SFT） -->
-      <div class="defect-card fragment f" data-fragment-index="4" style="flex: 0 0 calc((100% - 36px) / 3);">
+      <div class="defect-card fragment f visible" data-fragment-index="4" style="flex: 0 0 calc((100% - 36px) / 3);">
         <div class="defect-title">看起来很有道理</div>
-        <div class="defect-why">SFT 教它生成「像样的回答」——像样不等于对，容易被语气说服</div>
+        <div class="defect-why">SFT 教它生成「对人类友好的回答」，容易谄媚</div>
         <div class="defect-action">用客观方式验证结果，不要只看它说得多确信</div>
       </div>
 
       <!-- 缺陷 5：擅长有明确反馈的问题（RL） -->
-      <div class="defect-card fragment f" data-fragment-index="5" style="flex: 0 0 calc((100% - 36px) / 3);">
+      <div class="defect-card fragment f visible current-fragment" data-fragment-index="5" style="flex: 0 0 calc((100% - 36px) / 3);">
         <div class="defect-title">擅长有明确反馈的问题</div>
-        <div class="defect-why">RL 在有客观对错的任务上反复打过分，标准模糊的任务表现就不稳定</div>
+        <div class="defect-why">RL 在有客观对错的任务（数学、代码）上反复训练过模型</div>
         <div class="defect-action">尽量把任务转化成「能验证对错」的形式</div>
       </div>
 
@@ -1879,7 +1879,28 @@ Reveal.initialize({
   transform: scale(1.1);
 }
 #edit-del-btn.show { display: block; }
+
+/* === 发布版默认隐藏作者编辑工具与页码 === */
+/* === URL 加 ?edit=1 即可显示（演讲/编辑模式）=== */
+.edit-toolbar, #page-indicator {
+  display: none !important;
+  visibility: hidden !important;
+}
+body.show-editor .edit-toolbar {
+  display: flex !important;
+  visibility: visible !important;
+}
+body.show-editor #page-indicator {
+  display: block !important;
+  visibility: visible !important;
+}
 </style>
+<script>
+  if (new URLSearchParams(location.search).has('edit')) {
+    document.documentElement.classList.add('editor-mode');
+    document.addEventListener('DOMContentLoaded', () => document.body.classList.add('show-editor'));
+  }
+</script>
 
 <div class="edit-toolbar">
   <button class="edit-btn" id="btn-edit" title="开始编辑（E 键开始/完成；Ctrl+S 强制重存）">✎ 编辑此页</button>
