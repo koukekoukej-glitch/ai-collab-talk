@@ -1,3 +1,4 @@
 *.bak
 .part1.html.bak
 ChatGPT Image *.png
+.tools/
