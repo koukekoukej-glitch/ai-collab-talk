@@ -1736,9 +1736,7 @@
     <h1 class="hero" style="font-size: 72px;">判断力</h1>
     <div class="s28"></div>
     <p class=”fragment f” data-fragment-index=”0” style=”font-size: 22px; color: var(--ink-70); line-height: 1.7; text-align: center; margin: 0;”>
-      什么是”正确”、”好”
-    </p>
-    <p class=”fragment f” data-fragment-index=”1” style=”font-size: 22px; color: var(--ink-70); line-height: 1.7; text-align: center; margin: 0;”>
+      什么是”正确”、”好”<br>
       <span style=”color: var(--ink); font-weight: 600;”>永远需要你来定义</span>
     </p>
   </div>
@@ -2292,8 +2290,12 @@ Reveal.initialize({
   }
 
   function fixJudgementSlide() {
+    const edits = loadEdits();
+    const slides = getAllSlides();
     const slide = document.getElementById('slide-judgement');
     if (!slide) return;
+    const idx = slides.indexOf(slide);
+    if (idx === -1 || !edits[idx]) return; // 没有本地编辑，直接用文件结构
     const inner = slide.querySelector('div');
     if (!inner) return;
     inner.querySelectorAll('p').forEach(p => p.remove());
