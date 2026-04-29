@@ -1775,6 +1775,15 @@ Reveal.initialize({
   color: var(--ink) !important;
   font-weight: 600 !important;
 }
+#slide-judgement p.fragment.f {
+  opacity: 0 !important;
+  transform: translateY(14px) !important;
+  transition: all 0.6s cubic-bezier(0.16,1,0.3,1) !important;
+}
+#slide-judgement p.fragment.f.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
 </style>
 
 <!-- ========== 浏览器内编辑功能 ========== -->
